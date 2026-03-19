@@ -30,19 +30,40 @@
   /* EDIT BAR */
   .edit-bar {
     position: fixed; bottom: 24px; right: 24px; z-index: 999;
-    display: flex; gap: 8px; align-items: center;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 320px;
     background: var(--panel); border: 1px solid var(--border-strong);
-    border-radius: 8px; padding: 10px 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+    border-radius: 10px; padding: 12px 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
     font-family: var(--font-body); font-size: 13px;
   }
-  .edit-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink3); transition: background .2s; }
+  .edit-bar-row { display: flex; gap: 8px; align-items: center; width: 100%; }
+  .edit-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink3); transition: background .2s; flex-shrink: 0; }
   .edit-dot.on { background: #2d62a0; }
-  #edit-toggle { background: var(--accent); color: #fff; border: none; border-radius: 5px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: opacity .15s; }
-  #edit-toggle:hover { opacity: .85; }
-  #edit-toggle.on { background: var(--accent-mid); }
-  body.editing [contenteditable="true"] { outline: 2px dashed rgba(45,98,160,0.4); outline-offset: 2px; border-radius: 3px; cursor: text; }
+  .edit-bar-label { color: var(--ink3); font-size: 12px; flex: 1; }
+  .edit-bar-btn { border: none; border-radius: 5px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: opacity .15s; white-space: nowrap; }
+  .edit-bar-btn:hover { opacity: .85; }
+  .edit-bar-btn.primary { background: var(--accent); color: #fff; }
+  .edit-bar-btn.primary.on { background: var(--accent-mid); }
+  .edit-bar-btn.secondary { background: var(--bg2); color: var(--ink); border: 1px solid var(--border-strong); }
+  .edit-bar-hint { font-size: 11px; color: var(--ink3); width: 100%; padding-top: 8px; border-top: 1px solid var(--border); display: none; line-height: 1.5; }
+  body.editing .edit-bar-hint { display: block; }
+  #copy-btn { display: none; }
+  body.editing #copy-btn { display: inline-block; }
+  /* TEXT EDITING */
+  body.editing [contenteditable="true"] { outline: 2px dashed rgba(45,98,160,0.35); outline-offset: 2px; border-radius: 3px; cursor: text; }
   body.editing [contenteditable="true"]:focus { outline: 2px solid var(--accent-mid); background: rgba(45,98,160,0.04); }
+  /* PHOTO DRAG */
+  .photo-wrap { position: relative; display: block; }
+  .drag-handle {
+    display: none; position: absolute; top: 8px; left: 8px; z-index: 10;
+    background: rgba(255,255,255,0.92); border: 1px solid var(--border-strong);
+    border-radius: 5px; padding: 4px 8px; font-size: 11px; font-weight: 600;
+    color: var(--ink2); cursor: grab; user-select: none;
+  }
+  .drag-handle:active { cursor: grabbing; }
+  body.editing .drag-handle { display: block; }
+  .photo-wrap.drag-over img { outline: 3px solid var(--accent-mid); outline-offset: -3px; border-radius: 8px; opacity: 0.7; }
+  .photo-wrap.dragging img { opacity: 0.35; }
 
   /* LAYOUT */
   .container { max-width: 920px; margin: 0 auto; padding: 0 36px; }
@@ -298,9 +319,13 @@
 <body>
 
 <div class="edit-bar">
-  <div class="edit-dot" id="edit-dot"></div>
-  <span id="edit-label" style="color:var(--ink3)">Edit mode off</span>
-  <button id="edit-toggle" onclick="toggleEdit()">Edit text</button>
+  <div class="edit-bar-row">
+    <div class="edit-dot" id="edit-dot"></div>
+    <span class="edit-bar-label" id="edit-label">Edit mode off</span>
+    <button class="edit-bar-btn primary" id="edit-toggle" onclick="toggleEdit()">Edit page</button>
+    <button class="edit-bar-btn secondary" id="copy-btn" onclick="copyCode()">Copy code</button>
+  </div>
+  <div class="edit-bar-hint">✏️ Click any text to edit &nbsp;·&nbsp; ⠿ Drag photos to reorder</div>
 </div>
 
 <nav>
@@ -315,6 +340,7 @@
 <div class="page-tabs">
   <button class="tab-btn active" id="tab-teams" onclick="showPage('teams')">Teams &amp; Clubs</button>
   <button class="tab-btn" id="tab-individual" onclick="showPage('individual')">Individual Athletes</button>
+  <button class="tab-btn" id="tab-frisbee" onclick="showPage('frisbee')">Ultimate Frisbee</button>
 </div>
 
 
@@ -327,15 +353,15 @@
       <div class="hero-content">
         <div class="hero-eyebrow">Elite Sport Performance · Sydney, Australia</div>
         <h1>Dylan<br><em>Bennett</em></h1>
-        <p class="hero-sub" contenteditable="false">Sport scientist and S&amp;C coach to the Australian Sevens Rugby programme — bringing elite-level performance methodology to club and national ultimate frisbee teams.</p>
+        <p class="hero-sub" contenteditable="false">Sport scientist and S&amp;C coach to the Australian Sevens Rugby programme — delivering elite-level performance methodology to club teams, sport organisations, and individual athletes across Australia.</p>
         <div class="hero-actions">
           <a href="#packages" class="btn-primary">View packages</a>
           <a href="#about" class="btn-ghost">About Dylan</a>
         </div>
         <div class="hero-stats">
-          <div class="stat"><div class="stat-num" contenteditable="false">7s</div><div class="stat-label" contenteditable="false">Australian Sevens Rugby S&amp;C</div></div>
-          <div class="stat"><div class="stat-num" contenteditable="false">AUS</div><div class="stat-label" contenteditable="false">National Ultimate Frisbee athlete</div></div>
-          <div class="stat"><div class="stat-num" contenteditable="false">3+</div><div class="stat-label" contenteditable="false">Club &amp; national teams coached</div></div>
+          <div class="stat"><div class="stat-num" contenteditable="false">7s</div><div class="stat-label" contenteditable="false">S&amp;C Coach, Australian Rugby Sevens</div></div>
+          <div class="stat"><div class="stat-num" contenteditable="false">7+</div><div class="stat-label" contenteditable="false">Years elite sport science &amp; S&amp;C</div></div>
+          <div class="stat"><div class="stat-num" contenteditable="false">M &amp; W</div><div class="stat-label" contenteditable="false">Men's &amp; Women's national programmes</div></div>
         </div>
       </div>
     </div>
@@ -348,29 +374,29 @@
         <div class="section-label">About</div>
         <h2 class="about-heading" contenteditable="false">Built from inside the sport</h2>
         <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <img src="sevens_close.jpeg" alt="Dylan Bennett — Australian Sevens S&C coach" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;grid-row:span 2;">
-          <img src="wallabies_pads.jpeg" alt="Dylan Bennett — Wallabies training" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;">
-          <img src="parry.jpeg" alt="Dylan Bennett coaching" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;">
+          <div class="photo-wrap" style="grid-row:span 2;" draggable="true"><div class="drag-handle">⠿ drag</div><img src="sevens_close.jpeg" alt="Dylan Bennett — Australian Sevens S&C coach" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;display:block;"></div>
+          <div class="photo-wrap" draggable="true"><div class="drag-handle">⠿ drag</div><img src="wallabies_pads.jpeg" alt="Dylan Bennett — Wallabies training" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;"></div>
+          <div class="photo-wrap" draggable="true"><div class="drag-handle">⠿ drag</div><img src="parry.jpeg" alt="Dylan Bennett coaching" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;"></div>
         </div>
       </div>
       <div class="about-body">
-        <p contenteditable="false">I'm not a generic sports trainer who learned frisbee from YouTube. I'm an Australian national team athlete who also holds an elite S&amp;C role with one of the country's most demanding professional rugby programmes.</p>
-        <p contenteditable="false">That combination means the programs I build for your team are grounded in the actual movement demands of the sport — explosive pivoting, disc-in-hand acceleration, repeated sprint capacity, and the positional athleticism that ultimate requires.</p>
-        <p contenteditable="false">Every program I write is built around your team's schedule, facilities, and performance goals — not a generic template with your logo on it.</p>
+        <p contenteditable="false">I work at the intersection of elite sport and evidence-based practice. As an S&amp;C coach embedded in the Australian Sevens Rugby programme, I design and deliver performance training for some of the country's most demanding professional athletes — men's and women's.</p>
+        <p contenteditable="false">That experience shapes everything I build for club and community teams. You get the methodology of an elite programme, applied practically to your sport, your schedule, and your athletes' realities.</p>
+        <p contenteditable="false">Every program is built around your team's specific movement demands, competition calendar, and available resources — not a generic template with your logo dropped in.</p>
         <div class="credential-list">
           <div class="credential" contenteditable="false">S&amp;C Coach — Australian Men's &amp; Women's Sevens Rugby</div>
-          <div class="credential" contenteditable="false">Australian National Ultimate Frisbee athlete</div>
-          <div class="credential" contenteditable="false">Sport Scientist (ESSA accredited)</div>
+          <div class="credential" contenteditable="false">Sport Scientist — ESSA accredited</div>
           <div class="credential" contenteditable="false">Experience across club, state &amp; national programmes</div>
+          <div class="credential" contenteditable="false">Australian national-level athlete</div>
         </div>
       </div>
     </div>
 
     <!-- Photo proof strip -->
     <div style="margin-top:48px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;">
-      <img src="jw_team.jpeg" alt="Australian Sevens Rugby team — on tour in Italy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;object-position:center top;">
-      <img src="nz.jpeg" alt="Dylan Bennett on field" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;">
-      <img src="rens.jpeg" alt="Dylan Bennett coaching session" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;">
+      <div class="photo-wrap" draggable="true"><div class="drag-handle">⠿ drag</div><img src="jw_team.jpeg" alt="Australian Sevens Rugby team — on tour in Italy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;object-position:center top;display:block;"></div>
+      <div class="photo-wrap" draggable="true"><div class="drag-handle">⠿ drag</div><img src="nz.jpeg" alt="Dylan Bennett on field" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block;"></div>
+      <div class="photo-wrap" draggable="true"><div class="drag-handle">⠿ drag</div><img src="rens.jpeg" alt="Dylan Bennett coaching session" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block;"></div>
     </div>
     <p style="margin-top:10px;font-size:12px;color:var(--ink3);text-align:center;letter-spacing:0.04em;">Australian Sevens Rugby — on tour with the programme across Europe and Asia</p>
   </section>
@@ -381,12 +407,12 @@
       <div class="section-label">What you get</div>
       <h2 class="section-heading">Everything your team needs</h2>
       <div class="services-grid">
-        <div class="service-item"><div class="service-num">01</div><div class="service-title" contenteditable="false">Sport-specific program design</div><div class="service-desc" contenteditable="false">Programs built around the movement demands of ultimate — not adapted from another sport. Custom or templated depending on your package.</div></div>
-        <div class="service-item"><div class="service-num">02</div><div class="service-title" contenteditable="false">In-season &amp; off-season phases</div><div class="service-desc" contenteditable="false">Periodised across your full season. Acceleration, speed, and conditioning blocks aligned to your competition calendar.</div></div>
-        <div class="service-item"><div class="service-num">03</div><div class="service-title" contenteditable="false">Ongoing program updates</div><div class="service-desc" contenteditable="false">Programs aren't static documents. They evolve as the season progresses, athletes adapt, and competition demands shift.</div></div>
-        <div class="service-item"><div class="service-num">04</div><div class="service-title" contenteditable="false">Regular coach check-ins</div><div class="service-desc" contenteditable="false">Monthly or fortnightly calls to review progress, answer questions, and adjust the program based on what's happening on the ground.</div></div>
-        <div class="service-item"><div class="service-num">05</div><div class="service-title" contenteditable="false">Drilling &amp; mechanics sessions</div><div class="service-desc" contenteditable="false">Field-based acceleration, speed, and conditioning work that integrates frisbee-specific mechanics — not standard athletics drills.</div></div>
-        <div class="service-item"><div class="service-num">06</div><div class="service-title" contenteditable="false">In-person camps &amp; sessions</div><div class="service-desc" contenteditable="false">Available for teams wanting hands-on coaching. Pre-season testing, skills camps, and intensive blocks available on request.</div></div>
+        <div class="service-item"><div class="service-num">01</div><div class="service-title" contenteditable="false">Sport-specific program design</div><div class="service-desc" contenteditable="false">Programs built around the actual movement demands of your sport — acceleration, speed, power, and repeat sprint capacity tailored to how your athletes compete.</div></div>
+        <div class="service-item"><div class="service-num">02</div><div class="service-title" contenteditable="false">In-season &amp; off-season phases</div><div class="service-desc" contenteditable="false">Periodised across your full season. Training blocks are structured around your competition calendar so athletes peak when it matters.</div></div>
+        <div class="service-item"><div class="service-num">03</div><div class="service-title" contenteditable="false">Ongoing program updates</div><div class="service-desc" contenteditable="false">Programs evolve as the season progresses, athletes adapt, and competition demands shift. You're not locked into a static document.</div></div>
+        <div class="service-item"><div class="service-num">04</div><div class="service-title" contenteditable="false">Regular coach check-ins</div><div class="service-desc" contenteditable="false">Monthly or fortnightly calls to review how athletes are tracking, answer questions, and adjust the program based on what's happening on the ground.</div></div>
+        <div class="service-item"><div class="service-num">05</div><div class="service-title" contenteditable="false">Field &amp; gym sessions</div><div class="service-desc" contenteditable="false">Sport-specific conditioning work that bridges the gym and the field — built around the energy systems and movement patterns your sport demands.</div></div>
+        <div class="service-item"><div class="service-num">06</div><div class="service-title" contenteditable="false">In-person camps &amp; sessions</div><div class="service-desc" contenteditable="false">Hands-on coaching available for teams wanting direct involvement. Pre-season testing, skills camps, and intensive blocks on request.</div></div>
       </div>
     </div>
   </section>
@@ -448,9 +474,9 @@
     <div class="container">
       <h2>Ready to<br><em>work together?</em></h2>
       <p contenteditable="false">Tell me about your team — sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
-      <a href="/cdn-cgi/l/email-protection#15717766657a6761657067737a6778747b7670557278747c793b767a78" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <a href="/cdn-cgi/l/email-protection#b0d4d2c3c0dfc2c4c0d5c2d6dfc2ddd1ded3d5f0d7ddd1d9dc9ed3dfdd" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
       <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
-        <a href="/cdn-cgi/l/email-protection#d7b3b5a4a7b8a5a3a7b2a5b1b8a5bab6b9b4b297b0bab6bebbf9b4b8ba" class="contact-link"><span class="__cf_email__" data-cfemail="b5d1d7c6c5dac7c1c5d0c7d3dac7d8d4dbd6d0f5d2d8d4dcd99bd6dad8">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#10747263607f6264607562767f627d717e737550777d71797c3e737f7d" class="contact-link"><span class="__cf_email__" data-cfemail="70141203001f0204001502161f021d111e131530171d11191c5e131f1d">[email&#160;protected]</span></a>
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
         &nbsp;·&nbsp;
@@ -572,9 +598,9 @@
     <div class="container">
       <h2>Let's build<br><em>your program</em></h2>
       <p contenteditable="false">Send me a message with your sport, level, and what you're trying to achieve. No commitment — just a conversation.</p>
-      <a href="/cdn-cgi/l/email-protection#fb9f99888b94898f8b9e899d9489969a95989ebb9c969a9297d5989496" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <a href="/cdn-cgi/l/email-protection#10747263607f6264607562767f627d717e737550777d71797c3e737f7d" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
       <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
-        <a href="/cdn-cgi/l/email-protection#680c0a1b18071a1c180d1a0e071a0509060b0d280f05090104460b0705" class="contact-link"><span class="__cf_email__" data-cfemail="f99d9b8a89968b8d899c8b9f968b9498979a9cb99e94989095d79a9694">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#f7939584879885838792859198859a96999492b7909a969e9bd994989a" class="contact-link"><span class="__cf_email__" data-cfemail="385c5a4b48574a4c485d4a5e574a5559565b5d785f55595154165b5755">[email&#160;protected]</span></a>
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
       </p>
@@ -583,12 +609,130 @@
 
 </div><!-- /individual -->
 
+<!-- ══ ULTIMATE FRISBEE PAGE ══ -->
+<div class="page" id="page-frisbee">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Ultimate Frisbee Specialist · Sydney, Australia</div>
+        <h1>Built for<br><em>Ultimate</em></h1>
+        <p class="hero-sub" contenteditable="false">The only S&amp;C coach in Australia working at elite rugby level who also competes for the national ultimate frisbee team. The programs I write for your team come from the inside — not adapted from another sport.</p>
+        <div class="hero-actions">
+          <a href="#frisbee-packages" class="btn-primary">View packages</a>
+          <a href="#frisbee-why" class="btn-ghost">Why it matters</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-num" contenteditable="false">AUS</div><div class="stat-label" contenteditable="false">National Ultimate Frisbee athlete</div></div>
+          <div class="stat"><div class="stat-num" contenteditable="false">3+</div><div class="stat-label" contenteditable="false">Ultimate teams currently coached</div></div>
+          <div class="stat"><div class="stat-num" contenteditable="false">7s</div><div class="stat-label" contenteditable="false">Elite rugby S&amp;C — applied to your sport</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT MATTERS -->
+  <section id="frisbee-why" style="background:var(--panel);">
+    <div class="container">
+      <div class="section-label">The difference</div>
+      <h2 class="section-heading">Why sport-specific<br>actually matters</h2>
+      <div class="how-grid">
+        <div>
+          <div class="how-num">01</div>
+          <div class="how-title" contenteditable="false">Ultimate has unique demands</div>
+          <div class="how-desc" contenteditable="false">Explosive pivoting from wide stances, repeated short accelerations, disc-in-hand sprint mechanics, and position-specific conditioning loads. Generic athletic training misses most of this.</div>
+        </div>
+        <div>
+          <div class="how-num">02</div>
+          <div class="how-title" contenteditable="false">I know the sport from the inside</div>
+          <div class="how-desc" contenteditable="false">I compete at national level — I know what it feels like to train for a deep tournament run, how to peak for Nationals, and what separates athletic teams from the rest at AUUC and WUCC.</div>
+        </div>
+        <div>
+          <div class="how-num">03</div>
+          <div class="how-title" contenteditable="false">Elite methodology, sport-specific execution</div>
+          <div class="how-desc" contenteditable="false">I bring what I do daily with the Australian Sevens — periodisation, acceleration mechanics, repeat sprint conditioning — and apply it to the specific patterns ultimate demands.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S INCLUDED -->
+  <section style="background:var(--bg);">
+    <div class="container">
+      <div class="section-label">What you get</div>
+      <h2 class="section-heading">Built around ultimate</h2>
+      <div class="services-grid">
+        <div class="service-item"><div class="service-num">01</div><div class="service-title" contenteditable="false">Ultimate-specific program design</div><div class="service-desc" contenteditable="false">Acceleration from pivot positions, D-strafe mechanics, curved sprint patterns, and conditioning built around the energy demands of ultimate — not adapted from track athletics.</div></div>
+        <div class="service-item"><div class="service-num">02</div><div class="service-title" contenteditable="false">Frisbee-integrated field sessions</div><div class="service-desc" contenteditable="false">Speed and conditioning work that integrates the disc — so your athletes develop athleticism in the context they'll actually use it, not in isolation from the game.</div></div>
+        <div class="service-item"><div class="service-num">03</div><div class="service-title" contenteditable="false">Tournament &amp; season periodisation</div><div class="service-desc" contenteditable="false">Programs structured around your club season, state championships, Nationals, and international tournaments so athletes peak at the right times.</div></div>
+        <div class="service-item"><div class="service-num">04</div><div class="service-title" contenteditable="false">Position-specific loading</div><div class="service-desc" contenteditable="false">Handlers, cutters, and deep defenders have different movement profiles. Programs can be individualised by position where your squad needs it.</div></div>
+        <div class="service-item"><div class="service-num">05</div><div class="service-title" contenteditable="false">Regular check-ins</div><div class="service-desc" contenteditable="false">Monthly or fortnightly calls to review progress and adjust — with a coach who understands the culture, the community, and the demands of the sport firsthand.</div></div>
+        <div class="service-item"><div class="service-num">06</div><div class="service-title" contenteditable="false">In-person camps &amp; sessions</div><div class="service-desc" contenteditable="false">Available for teams in the Sydney area or travelling squads. Pre-Nationals camps, testing, and intensive field blocks available on request.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section id="frisbee-packages" style="background:var(--panel);">
+    <div class="container">
+      <div class="section-label">Packages</div>
+      <h2 class="section-heading">Season packages</h2>
+      <div class="packages-grid">
+        <div class="package-card">
+          <div class="package-tier">Base</div>
+          <div class="package-name" contenteditable="false">Foundation</div>
+          <div class="package-price"><div class="price-amount" contenteditable="false">$400</div><div class="price-unit" contenteditable="false">per athlete · per season</div></div>
+          <ul class="package-includes">
+            <li contenteditable="false">Ultimate-specific templated program (acceleration + speed + conditioning phases)</li>
+            <li contenteditable="false">Delivered via Teambuildr — accessible on mobile</li>
+            <li contenteditable="false">Monthly check-in call with your team lead or captain</li>
+            <li contenteditable="false">Ongoing program updates across the season</li>
+            <li contenteditable="false">Direct messaging access for questions</li>
+          </ul>
+          <a href="#frisbee-contact" class="btn-package ghost">Get in touch</a>
+        </div>
+        <div class="package-card featured">
+          <div class="featured-tag">Most popular</div>
+          <div class="package-tier">Pro</div>
+          <div class="package-name" contenteditable="false">Custom</div>
+          <div class="package-price"><div class="price-amount" contenteditable="false">$600</div><div class="price-unit" contenteditable="false">per athlete · per season</div></div>
+          <ul class="package-includes">
+            <li contenteditable="false">Fully custom program built around your team's schedule, facilities &amp; tournament calendar</li>
+            <li contenteditable="false">Frisbee-integrated field sessions with full drill diagrams</li>
+            <li contenteditable="false">Fortnightly check-in calls throughout the season</li>
+            <li contenteditable="false">One in-person session or camp per season (Sydney-based)</li>
+            <li contenteditable="false">Ongoing program updates and real-time adjustments</li>
+            <li contenteditable="false">Priority direct access throughout the season</li>
+          </ul>
+          <a href="#frisbee-contact" class="btn-package primary">Get in touch</a>
+        </div>
+      </div>
+      <p style="margin-top:18px;font-size:13px;color:var(--ink3);text-align:center;" contenteditable="false">Coaching the Sydney Sunder (AOUC) and national frisbee teams. Custom arrangements for WUCC and international programmes available.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="frisbee-contact" class="cta-section">
+    <div class="container">
+      <h2>Let's build your<br><em>best season</em></h2>
+      <p contenteditable="false">Tell me about your team — your level, current training, and what you want to achieve this season. I'll come back to you within 48 hours.</p>
+      <a href="mailto:dbsportperformance@gmail.com" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
+        <a href="mailto:dbsportperformance@gmail.com" class="contact-link">dbsportperformance@gmail.com</a>
+        &nbsp;·&nbsp;
+        <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
+      </p>
+    </div>
+  </section>
+
+</div><!-- /frisbee -->
+
 <footer>
   <div class="footer-brand">DBSP</div>
   <div>Dylan Bennett Sport Performance · Sydney, Australia</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   function showPage(page, e) {
     if (e) e.preventDefault();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -597,7 +741,60 @@
     document.getElementById('tab-' + page).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
   let editing = false;
   function toggleEdit() {
     editing = !editing;
-    document.body.classList.toggle('editing', 
+    document.body.classList.toggle('editing', editing);
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      el.contentEditable = editing ? 'true' : 'false';
+    });
+    document.querySelectorAll('.photo-wrap').forEach(w => { w.draggable = editing; });
+    const btn = document.getElementById('edit-toggle');
+    const dot = document.getElementById('edit-dot');
+    const lbl = document.getElementById('edit-label');
+    btn.textContent = editing ? 'Done' : 'Edit page';
+    btn.classList.toggle('on', editing);
+    dot.classList.toggle('on', editing);
+    lbl.textContent = editing ? 'Editing' : 'Edit mode off';
+  }
+
+  let dragSrc = null;
+  document.addEventListener('dragstart', e => {
+    const wrap = e.target.closest('.photo-wrap');
+    if (!wrap || !editing) return;
+    dragSrc = wrap;
+    wrap.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  document.addEventListener('dragend', () => {
+    document.querySelectorAll('.photo-wrap').forEach(w => w.classList.remove('dragging', 'drag-over'));
+  });
+  document.addEventListener('dragover', e => {
+    const wrap = e.target.closest('.photo-wrap');
+    if (!wrap || wrap === dragSrc || !editing) return;
+    e.preventDefault();
+    document.querySelectorAll('.photo-wrap').forEach(w => w.classList.remove('drag-over'));
+    wrap.classList.add('drag-over');
+  });
+  document.addEventListener('dragleave', e => {
+    const wrap = e.target.closest('.photo-wrap');
+    if (wrap) wrap.classList.remove('drag-over');
+  });
+  document.addEventListener('drop', e => {
+    const wrap = e.target.closest('.photo-wrap');
+    if (!wrap || wrap === dragSrc || !editing) return;
+    e.preventDefault();
+    const srcImg = dragSrc.querySelector('img');
+    const destImg = wrap.querySelector('img');
+    const tmpSrc = srcImg.src; const tmpAlt = srcImg.alt;
+    srcImg.src = destImg.src; srcImg.alt = destImg.alt;
+    destImg.src = tmpSrc; destImg.alt = tmpAlt;
+    wrap.classList.remove('drag-over');
+  });
+
+  function copyCode() {
+    const clone = document.documentElement.cloneNode(true);
+    const bar = clone.querySelector('.edit-bar');
+    if (bar) bar.remove();
+    clone.querySelectorAll('[contenteditable]').forEach(el => el
