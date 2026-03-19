@@ -474,9 +474,9 @@
     <div class="container">
       <h2>Ready to<br><em>work together?</em></h2>
       <p contenteditable="false">Tell me about your team — sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
-      <a href="/cdn-cgi/l/email-protection#b0d4d2c3c0dfc2c4c0d5c2d6dfc2ddd1ded3d5f0d7ddd1d9dc9ed3dfdd" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <a href="#" class="email-link" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
       <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
-        <a href="/cdn-cgi/l/email-protection#10747263607f6264607562767f627d717e737550777d71797c3e737f7d" class="contact-link"><span class="__cf_email__" data-cfemail="70141203001f0204001502161f021d111e131530171d11191c5e131f1d">[email&#160;protected]</span></a>
+        <a href="#" class="email-link" class="contact-link"><span class="email-display"></span></a>
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
         &nbsp;·&nbsp;
@@ -598,9 +598,9 @@
     <div class="container">
       <h2>Let's build<br><em>your program</em></h2>
       <p contenteditable="false">Send me a message with your sport, level, and what you're trying to achieve. No commitment — just a conversation.</p>
-      <a href="/cdn-cgi/l/email-protection#10747263607f6264607562767f627d717e737550777d71797c3e737f7d" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <a href="#" class="email-link" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
       <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
-        <a href="/cdn-cgi/l/email-protection#f7939584879885838792859198859a96999492b7909a969e9bd994989a" class="contact-link"><span class="__cf_email__" data-cfemail="385c5a4b48574a4c485d4a5e574a5559565b5d785f55595154165b5755">[email&#160;protected]</span></a>
+        <a href="#" class="email-link" class="contact-link"><span class="email-display"></span></a>
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
       </p>
@@ -716,9 +716,9 @@
     <div class="container">
       <h2>Let's build your<br><em>best season</em></h2>
       <p contenteditable="false">Tell me about your team — your level, current training, and what you want to achieve this season. I'll come back to you within 48 hours.</p>
-      <a href="mailto:dbsportperformance@gmail.com" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
+      <a href="#" class="email-link" class="btn-primary" style="padding:15px 34px;font-size:14px;">Get in touch</a>
       <p style="margin-top:22px;font-size:13px;color:var(--ink3);">
-        <a href="mailto:dbsportperformance@gmail.com" class="contact-link">dbsportperformance@gmail.com</a>
+        <a href="#" class="email-link" class="contact-link"><span class="email-display"></span></a>
         &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
       </p>
@@ -733,6 +733,11 @@
 </footer>
 
 <script>
+  // Assemble email via JS so Cloudflare never mangles it
+  const e = ['dbsportperformance', 'gmail.com'].join('@');
+  document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + e; });
+  document.querySelectorAll('.email-display').forEach(s => { s.textContent = e; });
+
   function showPage(page, e) {
     if (e) e.preventDefault();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -789,12 +794,4 @@
     const destImg = wrap.querySelector('img');
     const tmpSrc = srcImg.src; const tmpAlt = srcImg.alt;
     srcImg.src = destImg.src; srcImg.alt = destImg.alt;
-    destImg.src = tmpSrc; destImg.alt = tmpAlt;
-    wrap.classList.remove('drag-over');
-  });
-
-  function copyCode() {
-    const clone = document.documentElement.cloneNode(true);
-    const bar = clone.querySelector('.edit-bar');
-    if (bar) bar.remove();
-    clone.querySelectorAll('[contenteditable]').forEach(el => el
+    dest
