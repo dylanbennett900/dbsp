@@ -322,8 +322,8 @@
   <div class="edit-bar-row">
     <div class="edit-dot" id="edit-dot"></div>
     <span class="edit-bar-label" id="edit-label">Edit mode off</span>
-    <button class="edit-bar-btn primary" id="edit-toggle" onclick="toggleEdit()">Edit page</button>
-    <button class="edit-bar-btn secondary" id="copy-btn" onclick="copyCode()">Copy code</button>
+    <button class="edit-bar-btn primary" id="edit-toggle">Edit page</button>
+    <button class="edit-bar-btn secondary" id="copy-btn">Copy code</button>
   </div>
   <div class="edit-bar-hint">✏️ Click any text to edit &nbsp;·&nbsp; ⠿ Drag photos to reorder</div>
 </div>
@@ -331,16 +331,16 @@
 <nav>
   <a class="nav-brand" href="#">DBSP</a>
   <div class="nav-links">
-    <a href="#" onclick="showPage('teams',event)">Teams</a>
-    <a href="#" onclick="showPage('individual',event)">Individual</a>
+    <a href="#" data-page="teams">Teams</a>
+    <a href="#" data-page="individual">Individual</a>
     <a href="#contact" class="nav-cta">Work with me</a>
   </div>
 </nav>
 
 <div class="page-tabs">
-  <button class="tab-btn active" id="tab-teams" onclick="showPage('teams')">Teams &amp; Clubs</button>
-  <button class="tab-btn" id="tab-individual" onclick="showPage('individual')">Individual Athletes</button>
-  <button class="tab-btn" id="tab-frisbee" onclick="showPage('frisbee')">Ultimate Frisbee</button>
+  <button class="tab-btn active" id="tab-teams" data-page="teams">Teams &amp; Clubs</button>
+  <button class="tab-btn" id="tab-individual" data-page="individual">Individual Athletes</button>
+  <button class="tab-btn" id="tab-frisbee" data-page="frisbee">Ultimate Frisbee</button>
 </div>
 
 
@@ -734,17 +734,17 @@
   <div class="footer-brand">DBSP</div>
   <div>Dylan Bennett Sport Performance · Sydney, Australia</div>
 </footer>
-
 <script>
   const emailAddr = ['dbsportperformance', 'gmail.com'].join('@');
 
-  function showPage(page, ev) {
-    if (ev) ev.preventDefault();
+  function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    document.getElementById('tab-' + page).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const pg = document.getElementById('page-' + page);
+    const tb = document.getElementById('tab-' + page);
+    if (pg) pg.classList.add('active');
+    if (tb) tb.classList.add('active');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
   }
 
   let editing = false;
@@ -758,10 +758,9 @@
     const btn = document.getElementById('edit-toggle');
     const dot = document.getElementById('edit-dot');
     const lbl = document.getElementById('edit-label');
-    btn.textContent = editing ? 'Done' : 'Edit page';
-    btn.classList.toggle('on', editing);
-    dot.classList.toggle('on', editing);
-    lbl.textContent = editing ? 'Editing' : 'Edit mode off';
+    if (btn) { btn.textContent = editing ? 'Done' : 'Edit page'; btn.classList.toggle('on', editing); }
+    if (dot) dot.classList.toggle('on', editing);
+    if (lbl) lbl.textContent = editing ? 'Editing — click any text' : 'Edit mode off';
   }
 
   function copyCode() {
@@ -774,11 +773,12 @@
 ' + clone.outerHTML;
     navigator.clipboard.writeText(html).then(() => {
       const btn = document.getElementById('copy-btn');
+      if (!btn) return;
       const orig = btn.textContent;
       btn.textContent = '✓ Copied!';
       btn.style.background = '#2d9e5f'; btn.style.color = '#fff';
       setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 2500);
-    });
+    }).catch(() => alert('Copy failed — try a different browser'));
   }
 
   let dragSrc = null;
@@ -809,6 +809,7 @@
     ev.preventDefault();
     const srcImg = dragSrc.querySelector('img');
     const destImg = wrap.querySelector('img');
+    if (!srcImg || !destImg) return;
     const tmpSrc = srcImg.src; const tmpAlt = srcImg.alt;
     srcImg.src = destImg.src; srcImg.alt = destImg.alt;
     destImg.src = tmpSrc; destImg.alt = tmpAlt;
@@ -816,6 +817,20 @@
   });
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Wire up tab buttons
+    document.querySelectorAll('[data-page]').forEach(el => {
+      el.addEventListener('click', ev => {
+        ev.preventDefault();
+        showPage(el.getAttribute('data-page'));
+      });
+    });
+    // Wire up edit toggle
+    const editBtn = document.getElementById('edit-toggle');
+    if (editBtn) editBtn.addEventListener('click', toggleEdit);
+    // Wire up copy btn
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) copyBtn.addEventListener('click', copyCode);
+    // Wire up email
     document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + emailAddr; });
     document.querySelectorAll('.email-display').forEach(s => { s.textContent = emailAddr; });
   });
