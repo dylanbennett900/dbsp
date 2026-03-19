@@ -734,9 +734,11 @@
 
 <script>
   // Assemble email via JS so Cloudflare never mangles it
-  const e = ['dbsportperformance', 'gmail.com'].join('@');
-  document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + e; });
-  document.querySelectorAll('.email-display').forEach(s => { s.textContent = e; });
+  const emailAddr = ['dbsportperformance', 'gmail.com'].join('@');
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + emailAddr; });
+    document.querySelectorAll('.email-display').forEach(s => { s.textContent = emailAddr; });
+  });
 
   function showPage(page, e) {
     if (e) e.preventDefault();
