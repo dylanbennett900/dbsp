@@ -167,16 +167,6 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 </style>
 </head>
 <body>
-
-    <span class="edit-lbl" id="edit-lbl">Edit mode off</span>
-    <button class="edit-btn primary" id="edit-toggle">Edit page</button>
-    <button class="edit-btn secondary" id="copy-btn">Copy code</button>
-  </div>
-  <div class="edit-hint">&#9999;&#65039; Click any text to edit &nbsp;&middot;&nbsp; &#128444; Click any photo to swap it</div>
-</div>
-
-    <button class="picker-close" id="picker-close">Cancel</button>
-  </div>
 </div>
 
 <nav>
@@ -389,10 +379,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         </div>
       </div>
       <div class="frisbee-img-grid">
-        <div class="photo-slot" data-slot="frisbee1" style="aspect-ratio:3/4;grid-row:span 2">
-          <img src="parry.jpeg" alt="parry">
-        </div>
-        <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
+      <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
           <img src="rens.jpeg" alt="rens">
         </div>
         <div class="photo-slot" data-slot="frisbee3" style="aspect-ratio:3/2">
@@ -474,5 +461,10 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
   <div>Dylan Bennett Sport Performance &middot; Sydney, Australia</div>
 </footer>
 
+<script>
+const e = ['dbsportperformance','gmail.com'].join('@');
+document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + e; });
+document.querySelectorAll('.email-display').forEach(s => { s.textContent = e; });
+</script>
 </body>
 </html>
