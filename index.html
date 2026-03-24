@@ -1,297 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js" integrity="sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-      (function() {
-        const originalConsole = window.console;
-        window.console = {
-          log: (...args) => {
-            originalConsole.log(...args);
-            window.parent.postMessage({ type: 'console', message: args.join(' ') }, '*');
-          },
-          error: (...args) => {
-            originalConsole.error(...args);
-            window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
-          },
-          warn: (...args) => {
-            originalConsole.warn(...args);
-            window.parent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
-          }
-        };
-
-        let requestId = 0;
-        let callbacksMap = new Map();
-        let streamControllers = new Map();
-        
-        window.claude = {
-          complete: (prompt) => {
-            return new Promise((resolve, reject) => {
-              const id = requestId++;
-              callbacksMap.set(id, { resolve, reject });
-              window.parent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
-            });
-          }
-        };
-
-        window.storage = {
-          get: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = requestId++;
-              callbacksMap.set(id, { resolve, reject });
-              window.parent.postMessage({ type: 'storageGet', id, key, shared }, '*');
-            });
-          },
-          set: (key, value, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = requestId++;
-              callbacksMap.set(id, { resolve, reject });
-              window.parent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
-            });
-          },
-          delete: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = requestId++;
-              callbacksMap.set(id, { resolve, reject });
-              window.parent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
-            });
-          },
-          list: (prefix, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = requestId++;
-              callbacksMap.set(id, { resolve, reject });
-              window.parent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
-            });
-          }
-        };
-
-        let pendingBlobs = new Map();
-        URL.createObjectURL = (blob) => {
-          // Store the blob and create an ID and URL for it
-          const blobId = `blob-${Date.now()}-${Math.random()}`;
-          pendingBlobs.set(blobId, blob);
-          return `blob-request://${blobId}`;
-        };
-
-        URL.revokeObjectURL = (url) => {
-          // Remove the blob from our store
-          const blobId = url.replace("blob-request://", "");
-          pendingBlobs.delete(blobId);
-        };
-
-        const getBlobFromURL = (url) => {
-          const blobId = url.replace("blob-request://", "");
-          return pendingBlobs.get(blobId);
-        };
-
-        // Override global fetch with streaming support
-        window.fetch = (url, init = {}) => {
-          return new Promise((resolve, reject) => {
-            const id = requestId++;
-            const channelId = `fetch-${id}-${Date.now()}`;
-            
-            callbacksMap.set(id, { 
-              resolve: (response) => {
-                // Create a ReadableStream for the response body
-                const stream = new ReadableStream({
-                  start(controller) {
-                    streamControllers.set(channelId, controller);
-                  },
-                  cancel() {
-                    streamControllers.delete(channelId);
-                  }
-                });
-                
-                // Create and return the Response with the stream
-                resolve(new Response(stream, {
-                  status: response.status,
-                  statusText: response.statusText,
-                  headers: response.headers
-                }));
-              },
-              reject,
-              channelId
-            });
-            
-            window.parent.postMessage({
-              type: 'proxyFetch',
-              id,
-              url,
-              init,
-              channelId
-            }, '*');
-          });
-        };
-
-        window.addEventListener('message', async (event) => {
-          if (event.data.type === 'takeScreenshot') {
-            const rootElement = document.getElementById('artifacts-component-root-html');
-            if (!rootElement) {
-              window.parent.postMessage({
-                type: 'screenshotError',
-                error: new Error('Root element not found'),
-              }, '*');
-            }
-            const screenshot = await htmlToImage.toPng(rootElement, {
-              imagePlaceholder:
-                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
-            });
-            window.parent.postMessage({
-              type: 'screenshotData',
-              data: screenshot,
-            }, '*');
-          } else if (event.data.type === 'claudeComplete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.completion);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'proxyFetchResponse') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-              callbacksMap.delete(event.data.id);
-            } else {
-              // Initial response with headers, status, etc.
-              callback.resolve({
-                status: event.data.status,
-                statusText: event.data.statusText,
-                headers: event.data.headers
-              });
-              // Don't delete the callback yet if streaming
-              if (!event.data.body) {
-                callbacksMap.delete(event.data.id);
-              }
-            }
-          } else if (event.data.type === 'proxyFetchStream') {
-            // Handle streaming data chunks
-            const controller = streamControllers.get(event.data.channelId);
-            if (controller) {
-              if (event.data.error) {
-                controller.error(new Error(event.data.error));
-                streamControllers.delete(event.data.channelId);
-              } else if (event.data.done) {
-                controller.close();
-                streamControllers.delete(event.data.channelId);
-                // Clean up the callback
-                const callback = Array.from(callbacksMap.entries()).find(
-                  ([_, value]) => value.channelId === event.data.channelId
-                );
-                if (callback) {
-                  callbacksMap.delete(callback[0]);
-                }
-              } else if (event.data.chunk) {
-                controller.enqueue(new Uint8Array(event.data.chunk));
-              }
-            }
-          } else if (event.data.type === 'storageGet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageSet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageDelete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageList') {
-            const callback = callbacksMap.get(event.data.id);
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          }
-        });
-
-        window.addEventListener('click', (event) => {
-          const isEl = event.target instanceof HTMLElement;
-          if (!isEl) return;
-    
-          // find ancestor links
-          const linkEl = event.target.closest("a");
-          if (!linkEl || !linkEl.href) return;
-    
-          event.preventDefault();
-          event.stopImmediatePropagation();
-    
-          if (linkEl.href.startsWith("blob-request:")) {
-            const blob = getBlobFromURL(linkEl.href);
-            if (!blob) return;
-            void blob.arrayBuffer().then((data) => {
-              window.parent.postMessage({
-                type: "downloadFile",
-                filename: linkEl.download,
-                data,
-                mimeType: blob.type || "application/octet-stream",
-              });
-            });
-          } else if (linkEl.href.startsWith("data:")) {
-            const [header, base64Data] = linkEl.href.split(",");
-            const mimeMatch = header.match(/data:([^;]+)/);
-            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
-            const binaryString = atob(base64Data);
-            const data = Uint8Array.from(binaryString, (c) =>
-              c.charCodeAt(0),
-            ).buffer;
-            window.parent.postMessage({
-              type: "downloadFile",
-              filename: linkEl.download,
-              data,
-              mimeType,
-            });
-          } else {
-            let linkUrl;
-            try {
-              linkUrl = new URL(linkEl.href);
-            } catch (error) {
-              return;
-            }
-    
-            if (linkUrl.hostname === window.location.hostname) return;
-      
-            window.parent.postMessage({
-              type: 'openExternal',
-              href: linkEl.href,
-            }, '*');
-          }
-      });
-
-        const originalOpen = window.open;
-        window.open = function (url) {
-          window.parent.postMessage({
-            type: "openExternal",
-            href: url,
-          }, "*");
-        };
-
-        window.addEventListener('error', (event) => {
-          window.parent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
-        });
-      })();
-    </script>
-  
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dylan Bennett — DBSP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -439,40 +153,6 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 
 
 
-
-/* EDIT UI */
-.slot-btn{display:none;position:absolute;inset:0;background:rgba(26,58,92,.55);align-items:center;justify-content:center;cursor:pointer;border:none;font-family:var(--fb)}
-.slot-btn span{background:#fff;color:var(--accent);font-size:12px;font-weight:600;padding:7px 14px;border-radius:5px;pointer-events:none}
-.slot-del{display:none;position:absolute;top:8px;right:8px;background:rgba(180,30,30,.85);color:#fff;border:none;border-radius:5px;width:28px;height:28px;font-size:16px;cursor:pointer;align-items:center;justify-content:center;line-height:1;font-family:var(--fb)}
-body.editing .slot-del{display:flex}
-body.editing .slot-btn{display:flex}
-body.editing .photo-slot{cursor:pointer}
-.picker-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
-.picker-overlay.open{display:flex}
-.picker-modal{background:var(--panel);border-radius:12px;padding:28px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto}
-.picker-modal h3{font-family:var(--fd);font-size:22px;font-weight:900;text-transform:uppercase;color:var(--ink);margin-bottom:20px}
-.picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.picker-thumb{border:2px solid transparent;border-radius:7px;overflow:hidden;cursor:pointer;transition:border-color .15s}
-.picker-thumb:hover{border-color:var(--accent-m)}
-.picker-thumb img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
-.picker-close{margin-top:20px;background:none;border:1px solid var(--border-s);border-radius:5px;padding:8px 18px;font-size:13px;font-family:var(--fb);cursor:pointer;color:var(--ink)}
-.edit-bar{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:320px;background:var(--panel);border:1px solid var(--border-s);border-radius:10px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.12);font-family:var(--fb);font-size:13px}
-.edit-row{display:flex;gap:8px;align-items:center;width:100%}
-.edit-dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);transition:background .2s;flex-shrink:0}
-.edit-dot.on{background:var(--accent-m)}
-.edit-lbl{color:var(--ink3);font-size:12px;flex:1}
-.edit-btn{border:none;border-radius:5px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:opacity .15s;white-space:nowrap}
-.edit-btn:hover{opacity:.85}
-.edit-btn.primary{background:var(--accent);color:#fff}
-.edit-btn.primary.on{background:var(--accent-m)}
-.edit-btn.secondary{background:var(--bg2);color:var(--ink);border:1px solid var(--border-s)}
-.edit-hint{font-size:11px;color:var(--ink3);width:100%;padding-top:8px;border-top:1px solid var(--border);display:none;line-height:1.5}
-body.editing .edit-hint{display:block}
-#copy-btn{display:none}
-body.editing #copy-btn{display:inline-block}
-body.editing [contenteditable="true"]{outline:2px dashed rgba(45,98,160,.35);outline-offset:2px;border-radius:3px;cursor:text}
-body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);background:rgba(45,98,160,.04)}
-
 @media(max-width:720px){
   .container{padding:0 20px}
   nav,footer{padding-left:20px;padding-right:20px}
@@ -486,12 +166,8 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
 }
 </style>
 </head>
-<body id="artifacts-component-root-html" class="editing">
-
-
-
-
-
+<body>
+</div>
 
 <nav>
   <a class="nav-brand" href="#">DBSP</a>
@@ -506,9 +182,9 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-eyebrow">Elite Sport Performance · Sydney, Australia</div>
+      <div class="hero-eyebrow">Elite Sport Performance &middot; Sydney, Australia</div>
       <h1>Dylan<br><em>Bennett</em></h1>
-      <p class="hero-sub">National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby Teams — delivering elite performance methodology to teams, clubs, and individual athletes across Australia.</p>
+      <p class="hero-sub">National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby Teams &mdash; delivering elite performance methodology to teams, clubs, and individual athletes across Australia.</p>
       <div class="hero-actions">
         <a href="#teams" class="btn-primary">View packages</a>
         <a href="#about" class="btn-ghost">About Dylan</a>
@@ -522,9 +198,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
     <div class="hero-img-wrap">
       <div class="photo-slot" data-slot="hero" style="height:100%">
         <img src="nz.jpeg" alt="nz">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -538,36 +212,30 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="about-photo-stack">
           <div class="photo-slot" data-slot="about1" style="aspect-ratio:3/2">
             <img src="rens.jpeg" alt="rens">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+          </div>
           <div class="photo-slot" data-slot="about2" style="aspect-ratio:3/2">
             <img src="wallabies_pads.jpeg" alt="wallabies_pads">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+          </div>
         </div>
       </div>
       <div class="about-body">
-        <p>I work at the intersection of elite sport and evidence-based practice. As S&amp;C coach embedded in the Australian Sevens Rugby Men's and Women's Teams, I design and deliver performance training for some of the country's best athletes — both men's and women's.</p>
+        <p>I work at the intersection of elite sport and evidence-based practice. As S&amp;C coach embedded in the Australian Sevens Rugby Men's and Women's Teams, I design and deliver performance training for some of the country's best athletes &mdash; both men's and women's.</p>
         <p>That experience shapes everything I build for you and your teams. You get the methodology of an elite program, applied practically to your sport, your schedule, and your athletes' realities.</p>
         <p>Every program is built around your team's specific sport demands, competition calendar, and available resources.</p>
         <div class="cred-list">
-          <div class="cred">S&amp;C Coach — Australian Men's &amp; Women's Sevens Rugby</div>
+          <div class="cred">S&amp;C Coach &mdash; Australian Men's &amp; Women's Sevens Rugby</div>
           <div class="cred">Rehabilitation Planning and Programming</div>
           <div class="cred">Experience across national &amp; state programs</div>
-          <div class="cred">Worked with multiple sports at an elite level — field, court and individual sports</div>
+          <div class="cred">Worked with multiple sports at an elite level &mdash; field, court and individual sports</div>
         </div>
       </div>
     </div>
     <div class="proof-strip" style="display:none">
       <div class="photo-slot" data-slot="proof1" style="aspect-ratio:16/9">
         <img src="jw_team.jpeg" alt="jw_team" style="object-position:center top">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+      </div>
     </div>
-    <p class="proof-caption">DBSP — Dylan Bennett Sport Performance</p>
+    <p class="proof-caption">DBSP &mdash; Dylan Bennett Sport Performance</p>
   </div>
 </section>
 
@@ -575,29 +243,27 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
   <div class="container">
     <div class="section-tag">
       <div class="section-tag-line"></div>
-      <div class="section-tag-text">01 &nbsp;·&nbsp; Teams &amp; Clubs</div>
+      <div class="section-tag-text">01 &nbsp;&middot;&nbsp; Teams &amp; Clubs</div>
     </div>
     <h2 class="section-heading">Performance coaching<br>for your whole team</h2>
     <div class="services-with-photo">
       <div class="services-grid">
-        <div class="svc"><div class="svc-num">01</div><div class="svc-title">Sport-specific program design</div><div class="svc-desc">Programs built around the actual movement demands of your sport — acceleration, speed, power, and repeat sprint capacity tailored to how your athletes compete.</div></div>
+        <div class="svc"><div class="svc-num">01</div><div class="svc-title">Sport-specific program design</div><div class="svc-desc">Programs built around the actual movement demands of your sport &mdash; acceleration, speed, power, and repeat sprint capacity tailored to how your athletes compete.</div></div>
         <div class="svc"><div class="svc-num">02</div><div class="svc-title">In-season &amp; off-season phases</div><div class="svc-desc">Periodised across your full season. Training blocks structured around your competition calendar so athletes peak when it matters.</div></div>
         <div class="svc"><div class="svc-num">03</div><div class="svc-title">Ongoing program updates</div><div class="svc-desc">Programs evolve as the season progresses, athletes adapt, and competition demands shift. You're not locked into a static document.</div></div>
         <div class="svc"><div class="svc-num">04</div><div class="svc-title">Regular coach check-ins</div><div class="svc-desc">Monthly or fortnightly calls to review how athletes are tracking, answer questions, and adjust the program based on what's happening on the ground.</div></div>
-        <div class="svc"><div class="svc-num">05</div><div class="svc-title">Field &amp; gym sessions</div><div class="svc-desc">Sport-specific conditioning that bridges the gym and the field — built around the energy systems and movement patterns your sport demands.</div></div>
+        <div class="svc"><div class="svc-num">05</div><div class="svc-title">Field &amp; gym sessions</div><div class="svc-desc">Sport-specific conditioning that bridges the gym and the field &mdash; built around the energy systems and movement patterns your sport demands.</div></div>
         <div class="svc"><div class="svc-num">06</div><div class="svc-title">In-person camps &amp; sessions</div><div class="svc-desc">Hands-on coaching for teams wanting direct involvement. Pre-season testing, intensive blocks, and skills camps available on request.</div></div>
       </div>
       <div class="photo-slot" data-slot="teams-portrait" style="aspect-ratio:3/4;align-self:stretch;border-radius:10px">
         <img src="jw_team.jpeg" alt="jw_team" style="object-position:center top">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+      </div>
     </div>
     <div class="pkg-grid" style="margin-top:56px">
       <div class="pkg">
         <div class="pkg-tier">Base</div>
         <div class="pkg-name">Foundation</div>
-        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete · per season</div></div>
+        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete &middot; per season</div></div>
         <ul class="pkg-list">
           <li>Sport-specific templated program delivered via Teambuildr</li>
           <li>Monthly check-in call with your team lead</li>
@@ -610,7 +276,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="pkg-badge">Most popular</div>
         <div class="pkg-tier">Pro</div>
         <div class="pkg-name">Custom</div>
-        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete · per season</div></div>
+        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete &middot; per season</div></div>
         <ul class="pkg-list">
           <li>Fully custom program designed around your team's schedule &amp; facilities</li>
           <li>Fortnightly check-in calls throughout the season</li>
@@ -628,16 +294,16 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
   <div class="container">
     <div class="section-tag">
       <div class="section-tag-line"></div>
-      <div class="section-tag-text">02 &nbsp;·&nbsp; Individual Athletes</div>
+      <div class="section-tag-text">02 &nbsp;&middot;&nbsp; Individual Athletes</div>
     </div>
     <div class="ind-hero-grid" style="margin-bottom:56px">
       <div>
         <h2 class="section-heading" style="margin-bottom:20px">Your own<br>performance coach</h2>
-        <p style="font-size:16px;color:var(--ink2);line-height:1.72;margin-bottom:28px">Personal S&amp;C programming built specifically for you — your sport, your schedule, your goals. Not a generic plan. A relationship with a coach who knows elite performance from the inside.</p>
+        <p style="font-size:16px;color:var(--ink2);line-height:1.72;margin-bottom:28px">Personal S&amp;C programming built specifically for you &mdash; your sport, your schedule, your goals. Not a generic plan. A relationship with a coach who knows elite performance from the inside.</p>
         <a href="#contact" class="btn-primary">Start the conversation</a>
       </div>
       <div class="for-who">
-        <div class="for-who-label">This is for you if…</div>
+        <div class="for-who-label">This is for you if&hellip;</div>
         <ul class="for-who-list">
           <li>You're a serious club or national-level athlete wanting structured training</li>
           <li>Your team has a programme but you want individual attention on top</li>
@@ -652,7 +318,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="pkg-tier">Starter</div>
         <div class="pkg-name">Remote</div>
         <div class="pkg-amount">$180</div>
-        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month · cancel anytime</div>
+        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month &middot; cancel anytime</div>
         <ul class="pkg-list">
           <li>Templated program adapted to your needs</li>
           <li>Monthly check-in call</li>
@@ -666,7 +332,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="pkg-tier">Standard</div>
         <div class="pkg-name">Custom</div>
         <div class="pkg-amount">$220</div>
-        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month · cancel anytime</div>
+        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month &middot; cancel anytime</div>
         <ul class="pkg-list">
           <li>Fully custom program written for you</li>
           <li>Fortnightly check-in calls</li>
@@ -680,7 +346,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="pkg-tier">Premium</div>
         <div class="pkg-name">Full access</div>
         <div class="pkg-amount">$320</div>
-        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month · cancel anytime</div>
+        <div class="pkg-unit" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">per month &middot; cancel anytime</div>
         <ul class="pkg-list">
           <li>Fully custom program tailored to your body's individual needs</li>
           <li>Weekly check-in calls</li>
@@ -691,8 +357,8 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
       </div>
     </div>
     <div class="trial-box">
-      <div class="trial-icon">★</div>
-      <div class="trial-text"><strong>Currently accepting a small number of new individual athletes.</strong> I'm intentionally keeping individual numbers small so the quality of coaching stays high. If you've been thinking about reaching out — now is a good time.</div>
+      <div class="trial-icon">&#9733;</div>
+      <div class="trial-text"><strong>Currently accepting a small number of new individual athletes.</strong> I'm intentionally keeping individual numbers small so the quality of coaching stays high. If you've been thinking about reaching out &mdash; now is a good time.</div>
     </div>
   </div>
 </section>
@@ -701,56 +367,44 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
   <div class="container">
     <div class="section-tag">
       <div class="section-tag-line"></div>
-      <div class="section-tag-text">03 &nbsp;·&nbsp; Ultimate Frisbee specialist</div>
+      <div class="section-tag-text">03 &nbsp;&middot;&nbsp; Ultimate Frisbee specialist</div>
     </div>
     <div class="frisbee-intro">
       <div>
         <div class="frisbee-tag">Inside the sport</div>
         <h2 class="frisbee-heading">Coaching built<br>for <em>ultimate</em></h2>
         <div class="frisbee-body">
-          <p>The only S&amp;C coach in the world working in professional sport at an elite level who also plays the sport of Ultimate Frisbee. The programs I write for your team are informed by an understanding of the demands of the game based on GPS data from international and national matches — not adapted from another sport.</p>
+          <p>The only S&amp;C coach in the world working in professional sport at an elite level who also plays the sport of Ultimate Frisbee. The programs I write for your team are informed by an understanding of the demands of the game based on GPS data from international and national matches &mdash; not adapted from another sport.</p>
           <p>Explosive cutting, repeat acceleration, position specific conditioning, and tournament periodisation. I know what it takes to build athletic ultimate teams because I play at that level myself.</p>
         </div>
       </div>
       <div class="frisbee-img-grid">
-        <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
-          <img src="dingoes_medal.jpeg" alt="dingoes_medal">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
+      <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
+          <img src="rens.jpeg" alt="rens">
         </div>
         <div class="photo-slot" data-slot="frisbee3" style="aspect-ratio:3/2">
-          <img src="layout.jpeg" alt="layout">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
+          <img src="nz.jpeg" alt="nz">
         </div>
       </div>
     </div>
     <div class="how-grid" style="margin-top:64px">
-      <div><div class="how-num">01</div><div class="how-title">Ultimate-specific mechanics</div><div class="how-desc">Acceleration from pivot positions, curved sprint patterns, position-specific loading for handlers and cutters — built around how the game is actually played.</div></div>
-      <div><div class="how-num">02</div><div class="how-title">Frisbee-integrated field work</div><div class="how-desc">Speed and conditioning work that meets the demands of the game — so athletes develop athleticism in the context they'll actually use it, not in isolation from the game.</div></div>
+      <div><div class="how-num">01</div><div class="how-title">Ultimate-specific mechanics</div><div class="how-desc">Acceleration from pivot positions, curved sprint patterns, position-specific loading for handlers and cutters &mdash; built around how the game is actually played.</div></div>
+      <div><div class="how-num">02</div><div class="how-title">Frisbee-integrated field work</div><div class="how-desc">Speed and conditioning work that meets the demands of the game &mdash; so athletes develop athleticism in the context they'll actually use it, not in isolation from the game.</div></div>
       <div><div class="how-num">03</div><div class="how-title">Tournament periodisation</div><div class="how-desc">Programs structured around your season (AUC, WUCC, WUC, AOUC) so your squad peaks at the right time in the season, not just in training blocks.</div></div>
     </div>
     <div style="margin-top:48px">
       <div class="photo-slot" data-slot="frisbee-wide" style="margin-bottom:8px;border-radius:10px;overflow:hidden">
         <img src="dingoes_team.jpeg" alt="dingoes_team" style="width:100%;height:auto;object-fit:contain;display:block;background:#eceae5">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
-        </div>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
         <div class="photo-slot" data-slot="frisbee-sky" style="aspect-ratio:1/1;border-radius:8px">
           <img src="sky.jpeg" alt="sky">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
         </div>
         <div class="photo-slot" data-slot="frisbee-action1" style="aspect-ratio:1/1;border-radius:8px">
           <img src="throw_vs_buzz.jpeg" alt="throw_vs_buzz">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
         </div>
         <div class="photo-slot" data-slot="frisbee-action2" style="aspect-ratio:1/1;border-radius:8px">
           <img src="dingoes_manila.jpeg" alt="dingoes_manila">
-          <button class="slot-btn"><span>Change</span></button>
-          <button class="slot-del" title="Remove photo">✕</button>
         </div>
       </div>
     </div>
@@ -759,7 +413,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
       <div class="pkg">
         <div class="pkg-tier">Base</div>
         <div class="pkg-name">Foundation</div>
-        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete · per campaign</div></div>
+        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete &middot; per campaign</div></div>
         <ul class="pkg-list">
           <li>Ultimate-specific templated program via Teambuildr</li>
           <li>Monthly check-in with your team lead</li>
@@ -772,7 +426,7 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <div class="pkg-badge">Most popular</div>
         <div class="pkg-tier">Pro</div>
         <div class="pkg-name">Custom</div>
-        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete · per campaign</div></div>
+        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete &middot; per campaign</div></div>
         <ul class="pkg-list">
           <li>Fully custom program built around your tournament calendar</li>
           <li>Frisbee-integrated field sessions with full drill diagrams</li>
@@ -783,20 +437,20 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
         <a href="#contact" class="btn-pkg p">Get in touch</a>
       </div>
     </div>
-    <p style="margin-top:16px;font-size:13px;color:var(--ink3);text-align:center">DBSP — Dylan Bennett Sport Performance</p>
+    <p style="margin-top:16px;font-size:13px;color:var(--ink3);text-align:center">DBSP &mdash; Dylan Bennett Sport Performance</p>
   </div>
 </section>
 
 <section id="contact" class="cta-section">
   <div class="container">
     <h2>Ready to<br><em>work together?</em></h2>
-    <p>Tell me about your team or your goals — sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
-    <a href="mailto:dbsportperformance@gmail.com" class="btn-primary email-link" style="padding:15px 36px;font-size:14px">Get in touch</a>
+    <p>Tell me about your team or your goals &mdash; sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
+    <a href="#" class="btn-primary email-link" style="padding:15px 36px;font-size:14px">Get in touch</a>
     <p style="margin-top:22px;font-size:13px;color:var(--ink3)">
-      <span class="email-display contact-link">dbsportperformance@gmail.com</span>
-      &nbsp;·&nbsp;
+      <span class="email-display contact-link"></span>
+      &nbsp;&middot;&nbsp;
       <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
-      &nbsp;·&nbsp;
+      &nbsp;&middot;&nbsp;
       <a href="https://linktr.ee/_dylanbennett" class="contact-link" target="_blank">Teambuildr programs</a>
     </p>
   </div>
@@ -804,106 +458,13 @@ body.editing [contenteditable="true"]:focus{outline:2px solid var(--accent-m);ba
 
 <footer>
   <div class="footer-brand">DBSP</div>
-  <div>Dylan Bennett Sport Performance · Sydney, Australia</div>
+  <div>Dylan Bennett Sport Performance &middot; Sydney, Australia</div>
 </footer>
 
 <script>
-const emailAddr = ['dbsportperformance','gmail.com'].join('@');
-const allPhotos = [
-  {src:'sevens_close.jpeg', label:'sevens_close'},
-  {src:'wallabies_pads.jpeg', label:'wallabies_pads'},
-  {src:'parry.jpeg', label:'parry'},
-  {src:'jw_team.jpeg', label:'jw_team'},
-  {src:'nz.jpeg', label:'nz'},
-  {src:'rens.jpeg', label:'rens'},
-  {src:'dingoes_huddle.jpeg', label:'dingoes_huddle'},
-  {src:'dingoes_manila.jpeg', label:'dingoes_manila'},
-  {src:'dingoes_medal.jpeg', label:'dingoes_medal'},
-  {src:'dingoes_team.jpeg', label:'dingoes_team'},
-  {src:'layout.jpeg', label:'layout'},
-  {src:'throw_vs_buzz.jpeg', label:'throw_vs_buzz'},
-  {src:'sky.jpeg', label:'sky'},
-];
-let editing = false;
-function toggleEdit() {
-  editing = !editing;
-  document.body.classList.toggle('editing', editing);
-  document.querySelectorAll('[contenteditable]').forEach(el => { el.contentEditable = editing ? 'true' : 'false'; });
-  document.getElementById('edit-toggle').textContent = editing ? 'Done' : 'Edit page';
-  document.getElementById('edit-toggle').classList.toggle('on', editing);
-  document.getElementById('edit-dot').classList.toggle('on', editing);
-  document.getElementById('edit-lbl').textContent = editing ? 'Click any photo to swap' : 'Edit mode off';
-}
-let activeSlot = null;
-function openPicker(slotEl) {
-  if (!editing) return;
-  activeSlot = slotEl;
-  const grid = document.getElementById('picker-grid');
-  grid.innerHTML = '';
-  allPhotos.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'picker-thumb';
-    div.innerHTML = '<img src="'+p.src+'" alt="'+p.label+'"><div style="font-size:11px;color:var(--ink3);padding:4px 4px 2px;text-align:center;font-family:var(--fb)">'+p.label+'</div>';
-    div.addEventListener('click', () => {
-      activeSlot.querySelector('img').src = p.src;
-      activeSlot.querySelector('img').alt = p.label;
-      closePicker();
-    });
-    grid.appendChild(div);
-  });
-  document.getElementById('picker-overlay').classList.add('open');
-}
-function closePicker() {
-  document.getElementById('picker-overlay').classList.remove('open');
-  activeSlot = null;
-}
-function flashCopyBtn() {
-  const btn = document.getElementById('copy-btn');
-  if (!btn) return;
-  const orig = btn.textContent;
-  btn.textContent = '✓ Copied!';
-  btn.style.background = '#2d9e5f'; btn.style.color = '#fff';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 2500);
-}
-function copyCode() {
-  try {
-    const clone = document.documentElement.cloneNode(true);
-    clone.querySelector('.edit-bar')?.remove();
-    clone.querySelector('.picker-overlay')?.remove();
-    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-    if (clone.body) clone.body.classList.remove('editing');
-    const html = '<!DOCTYPE html>\n' + clone.outerHTML;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(html).then(flashCopyBtn).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = html; ta.style.cssText = 'position:fixed;opacity:0';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-        flashCopyBtn();
-      });
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = html; ta.style.cssText = 'position:fixed;opacity:0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-      flashCopyBtn();
-    }
-  } catch(err) { alert('Could not copy — try View Source.'); }
-}
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + emailAddr; });
-  document.querySelectorAll('.email-display').forEach(s => { s.textContent = emailAddr; });
-  document.getElementById('edit-toggle').addEventListener('click', toggleEdit);
-  document.getElementById('copy-btn').addEventListener('click', copyCode);
-  document.getElementById('picker-close').addEventListener('click', closePicker);
-  document.getElementById('picker-overlay').addEventListener('click', ev => {
-    if (ev.target === ev.currentTarget) closePicker();
-  });
-  document.querySelectorAll('.photo-slot .slot-btn').forEach(btn => {
-    btn.addEventListener('click', ev => { ev.stopPropagation(); openPicker(btn.closest('.photo-slot')); });
-  });
-  document.querySelectorAll('.photo-slot .slot-del').forEach(btn => {
-    btn.addEventListener('click', ev => { ev.stopPropagation(); btn.closest('.photo-slot').style.display = 'none'; });
-  });
-});
+const e = ['dbsportperformance','gmail.com'].join('@');
+document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + e; });
+document.querySelectorAll('.email-display').forEach(s => { s.textContent = e; });
 </script>
-
-</body></html>
+</body>
+</html>
