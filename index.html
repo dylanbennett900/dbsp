@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dylan Bennett — DBSP</title>
+<title>Dylan Bennett &mdash; DBSP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -109,6 +109,53 @@ section:last-of-type{border-bottom:none}
 .frisbee-body{font-size:16px;color:var(--ink2);line-height:1.75}
 .frisbee-body p+p{margin-top:14px}
 .frisbee-img-grid{display:flex;flex-direction:column;gap:8px;width:100%}
+/* App section */
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.app-features{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:40px}
+.app-feat{background:var(--bg);padding:22px 24px}
+.app-feat-num{font-family:var(--fd);font-size:11px;font-weight:700;color:var(--accent-m);letter-spacing:.1em;margin-bottom:8px}
+.app-feat-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:5px}
+.app-feat-desc{font-size:13px;color:var(--ink3);line-height:1.6}
+.app-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:28px}
+.app-stat{background:var(--panel);padding:16px 18px}
+.app-stat-num{font-family:var(--fd);font-size:26px;font-weight:900;color:var(--accent);line-height:1;margin-bottom:2px}
+.app-stat-label{font-size:11px;color:var(--ink3);line-height:1.4}
+.app-visual{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;aspect-ratio:9/16;max-height:520px;display:flex;flex-direction:column}
+.app-visual-header{background:var(--accent);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.app-visual-brand{font-family:var(--fd);font-size:16px;font-weight:900;letter-spacing:.1em;color:#fff}
+.app-visual-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
+.app-visual-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:12px}
+.app-metric-row{background:var(--panel);border-radius:8px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.app-metric-label{font-size:12px;color:var(--ink3);margin-bottom:2px}
+.app-metric-val{font-family:var(--fd);font-size:22px;font-weight:900;color:var(--ink);line-height:1}
+.app-metric-pct{font-size:12px;font-weight:500}
+.app-metric-pct.good{color:#2d8a4e}
+.app-metric-pct.warn{color:#b87a10}
+.app-metric-pct.crit{color:#b83232}
+.app-bar-wrap{height:5px;background:var(--bg3);border-radius:3px;margin-top:8px;overflow:hidden}
+.app-bar-fill{height:100%;border-radius:3px;background:var(--accent-m)}
+/* Ebook section */
+.ebook-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.ebook-cover{background:var(--accent);border-radius:12px;padding:40px 36px;color:#fff;position:relative;overflow:hidden}
+.ebook-cover::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.ebook-cover-label{font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:16px}
+.ebook-cover-title{font-family:var(--fd);font-size:clamp(32px,4vw,48px);font-weight:900;text-transform:uppercase;line-height:.95;margin-bottom:8px}
+.ebook-cover-sub{font-family:var(--fd);font-size:16px;font-weight:400;letter-spacing:.04em;color:rgba(255,255,255,.75);margin-bottom:32px}
+.ebook-chapters{display:flex;flex-direction:column;gap:7px;margin-bottom:28px}
+.ebook-ch{font-size:12px;color:rgba(255,255,255,.65);display:flex;gap:10px;align-items:baseline}
+.ebook-ch-num{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.4);flex-shrink:0;width:22px}
+.ebook-byline{font-size:12px;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.12);padding-top:16px}
+.ebook-form-wrap{display:flex;flex-direction:column;gap:0}
+.ebook-pitch{font-size:16px;color:var(--ink2);line-height:1.75;margin-bottom:28px}
+.ebook-pitch p+p{margin-top:12px}
+.ebook-capture{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:28px}
+.ebook-capture-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px}
+.ebook-input{font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--bg);color:var(--ink);outline:none;transition:border-color .15s;width:100%;margin-bottom:10px}
+.ebook-input:focus{border-color:var(--accent-m)}
+.ebook-submit{display:block;width:100%;background:var(--accent);color:#fff;font-size:14px;font-weight:500;padding:13px 28px;border-radius:5px;border:none;cursor:pointer;font-family:var(--fb);transition:opacity .15s;text-align:center}
+.ebook-submit:hover{opacity:.85}
+.ebook-success{display:none;background:var(--accent-l);border:1px solid rgba(45,98,160,.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--accent);line-height:1.6;margin-top:12px}
+.ebook-fine-print{margin-top:10px;font-size:12px;color:var(--ink3)}
 .cta-section{text-align:center;padding:96px 0;background:var(--panel)}
 .cta-section h2{font-family:var(--fd);font-weight:900;font-size:clamp(44px,7vw,80px);text-transform:uppercase;line-height:.95;margin-bottom:18px}
 .cta-section h2 em{color:var(--accent-m);font-style:normal}
@@ -119,55 +166,22 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 .footer-brand{font-family:var(--fd);font-weight:900;font-size:18px;color:var(--accent);letter-spacing:.08em}
 .photo-slot{position:relative;display:block;border-radius:8px;overflow:hidden;cursor:default}
 .photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @media(max-width:720px){
   .container{padding:0 20px}
   nav,footer{padding-left:20px;padding-right:20px}
   section{padding:60px 0}
-  .hero-inner,.about-grid,.ind-hero-grid,.frisbee-intro{grid-template-columns:1fr}
+  .hero-inner,.about-grid,.ind-hero-grid,.frisbee-intro,.app-grid,.ebook-grid{grid-template-columns:1fr}
   .hero-img-wrap{min-height:50vw}
   .services-with-photo,.services-grid,.how-grid,.ind-price-grid,.pkg-grid{grid-template-columns:1fr}
   .proof-strip{grid-template-columns:1fr 1fr}
   .frisbee-img-grid{grid-template-columns:1fr 1fr}
-  .edit-bar{bottom:12px;right:12px}
+  .app-features{grid-template-columns:1fr}
+  .app-visual{max-height:none;aspect-ratio:auto}
+  .nav-links a[href="#frisbee-track"],.nav-links a[href="#ebook"]{display:none}
 }
 </style>
 </head>
 <body>
-</div>
 
 <nav>
   <a class="nav-brand" href="#">DBSP</a>
@@ -175,6 +189,8 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
     <a href="#teams">Teams</a>
     <a href="#individual">Individual</a>
     <a href="#ultimate">Ultimate</a>
+    <a href="#frisbee-track">Frisbee Track</a>
+    <a href="#ebook">Free ebook</a>
     <a href="#contact" class="nav-cta">Work with me</a>
   </div>
 </nav>
@@ -379,7 +395,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         </div>
       </div>
       <div class="frisbee-img-grid">
-      <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
+        <div class="photo-slot" data-slot="frisbee2" style="aspect-ratio:3/2">
           <img src="dingoes_medal.jpeg" alt="dingoes_medal">
         </div>
         <div class="photo-slot" data-slot="frisbee3" style="aspect-ratio:3/2">
@@ -408,7 +424,6 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         </div>
       </div>
     </div>
-
     <div class="pkg-grid" style="margin-top:56px">
       <div class="pkg">
         <div class="pkg-tier">Base</div>
@@ -441,6 +456,147 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
   </div>
 </section>
 
+<!-- ===== FRISBEE TRACK SECTION ===== -->
+<section id="frisbee-track" style="background:var(--panel)">
+  <div class="container">
+    <div class="section-tag">
+      <div class="section-tag-line"></div>
+      <div class="section-tag-text">04 &nbsp;&middot;&nbsp; Frisbee Track</div>
+    </div>
+    <div class="app-grid">
+      <div>
+        <div class="frisbee-tag">Free tool</div>
+        <h2 class="frisbee-heading" style="margin-bottom:20px">Train to the<br><em>actual numbers</em></h2>
+        <div class="frisbee-body">
+          <p>Frisbee Track is a training load monitoring app built specifically for Ultimate Frisbee &mdash; using GPS data collected from elite international competition. Not estimates. Not data borrowed from another sport. The real numbers from real games.</p>
+          <p>It translates match demands into personalised weekly targets for distance, high-speed running, accelerations, and gym load &mdash; then tracks where you are across the week and tells you what to do next. No GPS hardware required.</p>
+        </div>
+        <div class="app-stat-row" style="margin-top:32px">
+          <div class="app-stat"><div class="app-stat-num">3,479m</div><div class="app-stat-label">median game distance at WUC</div></div>
+          <div class="app-stat"><div class="app-stat-num">759m</div><div class="app-stat-label">high-speed running per game</div></div>
+          <div class="app-stat"><div class="app-stat-num">50</div><div class="app-stat-label">accelerations per game</div></div>
+        </div>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:28px">Targets are derived from this data &mdash; scaled to your level and position.</p>
+        <a href="https://frisbeetrack.app" target="_blank" class="btn-primary" style="margin-right:10px">Try Frisbee Track free</a>
+      </div>
+      <div>
+        <div class="app-visual">
+          <div class="app-visual-header">
+            <div>
+              <div class="app-visual-brand">FRISBEE TRACK</div>
+              <div class="app-visual-sub">Week 3 of 8 &middot; High load</div>
+            </div>
+            <div style="font-family:var(--fd);font-size:22px;font-weight:900;color:rgba(255,255,255,.9)">67%</div>
+          </div>
+          <div class="app-visual-body">
+            <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">Weekly targets</div>
+            <div class="app-metric-row">
+              <div>
+                <div class="app-metric-label">Total distance</div>
+                <div class="app-metric-val">14.2 km</div>
+                <div class="app-bar-wrap" style="width:140px"><div class="app-bar-fill" style="width:71%"></div></div>
+              </div>
+              <span class="app-metric-pct good">71%</span>
+            </div>
+            <div class="app-metric-row">
+              <div>
+                <div class="app-metric-label">High-speed running</div>
+                <div class="app-metric-val">2,840 m</div>
+                <div class="app-bar-wrap" style="width:140px"><div class="app-bar-fill" style="width:88%"></div></div>
+              </div>
+              <span class="app-metric-pct warn">88%</span>
+            </div>
+            <div class="app-metric-row">
+              <div>
+                <div class="app-metric-label">Accelerations</div>
+                <div class="app-metric-val">138</div>
+                <div class="app-bar-wrap" style="width:140px"><div class="app-bar-fill" style="width:55%"></div></div>
+              </div>
+              <span class="app-metric-pct good">55%</span>
+            </div>
+            <div class="app-metric-row">
+              <div>
+                <div class="app-metric-label">Gym load</div>
+                <div class="app-metric-val">2 sessions</div>
+                <div class="app-bar-wrap" style="width:140px"><div class="app-bar-fill" style="width:66%"></div></div>
+              </div>
+              <span class="app-metric-pct good">66%</span>
+            </div>
+            <div style="margin-top:auto;background:var(--accent-l);border:1px solid rgba(45,98,160,.18);border-radius:7px;padding:12px 14px">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-m);margin-bottom:4px">AI prescription</div>
+              <div style="font-size:13px;color:var(--accent);line-height:1.5">2 field sessions remaining this week. HSR at 88% &mdash; prioritise a tempo run before adding intensity.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="app-features" style="margin-top:48px">
+      <div class="app-feat">
+        <div class="app-feat-num">01</div>
+        <div class="app-feat-title">GPS-backed targets</div>
+        <div class="app-feat-desc">Weekly distance, HSR, VHSR, and acceleration targets derived from actual match data &mdash; scaled by level and position.</div>
+      </div>
+      <div class="app-feat">
+        <div class="app-feat-num">02</div>
+        <div class="app-feat-title">No hardware needed</div>
+        <div class="app-feat-desc">Log session type and the app calculates your load. Designed for players who don't have access to GPS units.</div>
+      </div>
+      <div class="app-feat">
+        <div class="app-feat-num">03</div>
+        <div class="app-feat-title">AI training prescription</div>
+        <div class="app-feat-desc">Get a weekly field and gym session prescription based on where you are in your training block and how your load is tracking.</div>
+      </div>
+      <div class="app-feat">
+        <div class="app-feat-num">04</div>
+        <div class="app-feat-title">Tournament periodisation</div>
+        <div class="app-feat-desc">Set your tournament date and the app builds a periodised block &mdash; moderate, high, and taper weeks &mdash; leading into competition.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EBOOK SECTION ===== -->
+<section id="ebook" style="background:var(--bg)">
+  <div class="container">
+    <div class="section-tag">
+      <div class="section-tag-line"></div>
+      <div class="section-tag-text">05 &nbsp;&middot;&nbsp; Free resource</div>
+    </div>
+    <div class="ebook-grid">
+      <div class="ebook-cover">
+        <div class="ebook-cover-label">DBSP &mdash; Free ebook</div>
+        <div class="ebook-cover-title">The High Performance<br>Puzzle</div>
+        <div class="ebook-cover-sub">Strength &amp; Conditioning for Ultimate Frisbee</div>
+        <div class="ebook-chapters">
+          <div class="ebook-ch"><span class="ebook-ch-num">01</span>Why S&amp;C belongs in your frisbee program</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">02</span>The five physical qualities of frisbee</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">03</span>How training adaptation actually works</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">04</span>Training, nutrition, recovery &mdash; the four levers</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">05</span>On-field training and gym work together</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">06&ndash;08</span>Recovery, nutrition, and the mental edge</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">09&ndash;12</span>Weekly templates, game day, supplements</div>
+        </div>
+        <div class="ebook-byline">Dylan Bennett &middot; DBSP &middot; 22 pages</div>
+      </div>
+      <div class="ebook-form-wrap">
+        <div class="ebook-pitch">
+          <p>A complete guide to physical preparation for Ultimate Frisbee &mdash; written from inside elite sport and grounded in GPS match data from international competition.</p>
+          <p>Covers the science of adaptation, how to structure your training week, recovery protocols, game day nutrition, and the supplements that actually work. Free. No strings.</p>
+        </div>
+        <div class="ebook-capture">
+          <div class="ebook-capture-label">Get the free ebook</div>
+          <input type="email" id="ebook-email" class="ebook-input" placeholder="Your email address" required>
+          <button class="ebook-submit" id="ebook-btn" onclick="submitEbook()">Send me the ebook &rarr;</button>
+          <div class="ebook-success" id="ebook-success">
+            <strong>Check your inbox.</strong> The ebook is on its way &mdash; usually within a minute. Check your spam folder if it doesn't arrive.
+          </div>
+          <p class="ebook-fine-print">No spam. Unsubscribe any time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contact" class="cta-section">
   <div class="container">
     <h2>Ready to<br><em>work together?</em></h2>
@@ -448,11 +604,11 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
     <form action="https://formspree.io/f/mqegzyzw" method="POST" style="max-width:480px;margin:36px auto 0;display:flex;flex-direction:column;gap:12px;text-align:left">
       <input type="text" name="name" placeholder="Your name" required style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'">
       <input type="email" name="email" placeholder="Your email" required style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'">
-      <textarea name="message" placeholder="Tell me about your team or goals — sport level, current setup, what you're trying to achieve..." required rows="5" style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;resize:vertical;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'"></textarea>
+      <textarea name="message" placeholder="Tell me about your team or goals &mdash; sport level, current setup, what you're trying to achieve..." required rows="5" style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;resize:vertical;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'"></textarea>
       <button type="submit" class="btn-primary" style="padding:13px 28px;font-size:14px;border:none;cursor:pointer">Send message</button>
     </form>
     <p style="margin-top:28px;font-size:13px;color:var(--ink3)">
-      <span class="email-display contact-link"></span>
+      <span class="email-display contact-link">dbsportperformance@gmail.com</span>
       &nbsp;&middot;&nbsp;
       <a href="https://www.linkedin.com/in/dylanbennettspsc/" class="contact-link" target="_blank">LinkedIn</a>
       &nbsp;&middot;&nbsp;
@@ -470,6 +626,44 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 const e = ['dbsportperformance','gmail.com'].join('@');
 document.querySelectorAll('.email-link').forEach(a => { a.href = 'mailto:' + e; });
 document.querySelectorAll('.email-display').forEach(s => { s.textContent = e; });
+
+async function submitEbook() {
+  const emailEl = document.getElementById('ebook-email');
+  const btn = document.getElementById('ebook-btn');
+  const success = document.getElementById('ebook-success');
+  const email = emailEl.value.trim();
+  if (!email || !email.includes('@')) {
+    emailEl.style.borderColor = '#b83232';
+    emailEl.focus();
+    return;
+  }
+  btn.textContent = 'Sending\u2026';
+  btn.disabled = true;
+  try {
+    const res = await fetch('https://pfojdysbhnwxyjfgglls.supabase.co/functions/v1/ebook-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (res.ok) {
+      emailEl.style.display = 'none';
+      btn.style.display = 'none';
+      success.style.display = 'block';
+    } else {
+      throw new Error('server error');
+    }
+  } catch {
+    btn.textContent = 'Send me the ebook \u2192';
+    btn.disabled = false;
+    btn.style.background = '#b83232';
+    setTimeout(() => { btn.style.background = ''; }, 2000);
+  }
+}
+
+document.getElementById('ebook-email').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitEbook();
+});
 </script>
+
 </body>
 </html>
