@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work with me — Dylan Bennett · DBSP</title>
+<meta name="description" content="Enquire about coaching with Dylan Bennett — sport scientist and S&C coach for the Australian Sevens Rugby Teams.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f4f2ee;
+    --navy: #1a3a5c;
+    --navy-mid: #2d62a0;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: rgba(26,58,92,0.15);
+    --border-strong: rgba(26,58,92,0.3);
+    --radius: 6px;
+  }
+
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 18px;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .nav-back {
+    font-size: 13px; color: var(--muted);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--navy); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* Layout */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  /* Left — intro */
+  .intro-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy-mid);
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .intro-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--navy-mid);
+  }
+
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(52px, 6vw, 72px);
+    line-height: 0.95;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--navy-mid);
+  }
+
+  .intro-body {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 420px;
+    margin-bottom: 40px;
+  }
+
+  .credentials {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .cred-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .cred-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--navy);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .cred-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .cred-text strong {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .cred-text span { color: var(--muted); font-size: 13px; }
+
+  .availability-note {
+    margin-top: 28px;
+    padding: 14px 16px;
+    background: var(--navy);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+  .availability-note strong { color: white; }
+
+  /* Right — form */
+  .form-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 40px;
+    position: sticky;
+    top: 80px;
+  }
+
+  .form-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .form-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--navy-mid);
+    box-shadow: 0 0 0 3px rgba(45,98,160,0.12);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px 24px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { background: #142d47; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: #9aaab8; cursor: not-allowed; }
+
+  .form-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  /* Success state */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .success-icon {
+    width: 52px; height: 52px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .success-icon svg { width: 24px; height: 24px; }
+  .success-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .success-body {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    color: #b83232;
+    font-size: 13px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .page {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 48px 20px 80px;
+    }
+    nav { padding: 0 20px; }
+    .form-card {
+      position: static;
+      padding: 28px 20px;
+    }
+    h1 { font-size: 52px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://dbsportperformance.com" class="nav-logo">DBSP</a>
+  <a href="https://dbsportperformance.com" class="nav-back">
+    <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2L3 7L8 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to site
+  </a>
+</nav>
+
+<div class="page">
+
+  <!-- Left: intro -->
+  <div class="intro">
+    <div class="intro-label">Get in touch</div>
+    <h1>Let's build<br>something<br><em>serious.</em></h1>
+    <p class="intro-body">
+      Tell me about your team or your goals. I'll come back to you within 48 hours with how I can help and whether there's a fit.
+    </p>
+
+    <div class="credentials">
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <div class="cred-text">
+          <strong>Australian Sevens Rugby — Men's &amp; Women's</strong>
+          <span>National S&amp;C &amp; Rehabilitation Coach</span>
+        </div>
+      </div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <div class="cred-text">
+          <strong>Australian Dingoes — Ultimate Frisbee</strong>
+          <span>Elite playing &amp; coaching, international competition</span>
+        </div>
+      </div>
+      <div class="cred-item">
+        <div class="cred-dot"></div>
+        <div class="cred-text">
+          <strong>Injury rehabilitation &amp; return to play</strong>
+          <span>Structured programming from initial rehab through full return to sport</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="availability-note">
+      <strong>Currently accepting new athletes and teams.</strong> Keeping numbers intentionally small — reach out while spots are available.
+    </div>
+  </div>
+
+  <!-- Right: form -->
+  <div class="form-card">
+    <div id="form-inner">
+      <div class="form-heading">Enquiry form</div>
+      <p class="form-sub">Takes two minutes. No obligation.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="context">Your situation</label>
+        <select id="context">
+          <option value="" disabled selected>Select the closest fit…</option>
+          <option value="Team — Ultimate Frisbee">Team — Ultimate Frisbee</option>
+          <option value="Team — Rugby / Sevens">Team — Rugby / Sevens</option>
+          <option value="Team — other sport">Team — other sport</option>
+          <option value="Individual athlete — Ultimate Frisbee">Individual athlete — Ultimate Frisbee</option>
+          <option value="Individual athlete — other sport">Individual athlete — other sport</option>
+          <option value="Injury rehab / return to sport">Injury rehab / return to sport</option>
+          <option value="Other">Other / not sure yet</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="goals">What are you trying to achieve?</label>
+        <textarea id="goals" placeholder="e.g. We're heading into our competitive season and want a structured conditioning block. Squad of 20, training 3x a week…"></textarea>
+        <div class="field-hint">Sport level, current setup, key events or dates — the more context the better.</div>
+      </div>
+
+      <div class="field">
+        <label for="heard">How did you find DBSP?</label>
+        <select id="heard">
+          <option value="" disabled selected>Select one…</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Frisbee Track app">Frisbee Track app</option>
+          <option value="Referral / word of mouth">Referral / word of mouth</option>
+          <option value="Frisbee community">Frisbee community</option>
+          <option value="Rugby / sports network">Rugby / sports network</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="submitEnquiry()">Send enquiry →</button>
+      <div class="error-msg" id="error-msg">Something went wrong — try again or email dbsportperformance@gmail.com</div>
+      <p class="form-note">Replies within 48 hours · No spam</p>
+    </div>
+
+    <!-- Success -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12L10 17L19 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-title">Enquiry sent</div>
+      <p class="success-body">Thanks — I'll come back to you within 48 hours. Looking forward to hearing more about what you're working towards.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+async function submitEnquiry() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const context = document.getElementById('context').value;
+  const goals = document.getElementById('goals').value.trim();
+  const heard = document.getElementById('heard').value;
+  const btn = document.getElementById('submit-btn');
+  const errMsg = document.getElementById('error-msg');
+
+  // Basic validation
+  if (!name) { document.getElementById('name').focus(); return; }
+  if (!email || !email.includes('@')) { document.getElementById('email').focus(); return; }
+
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  errMsg.style.display = 'none';
+
+  try {
+    const res = await fetch('https://pfojdysbhnwxyjfgglls.supabase.co/functions/v1/coaching-enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, context: context || null, goals: goals || null, heard_from: heard || null })
+    });
+
+    if (res.ok) {
+      document.getElementById('form-inner').style.display = 'none';
+      document.getElementById('success-state').style.display = 'block';
+    } else {
+      throw new Error('server error');
+    }
+  } catch {
+    btn.textContent = 'Send enquiry →';
+    btn.disabled = false;
+    errMsg.style.display = 'block';
+  }
+}
+
+// Enter key on inputs
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') submitEnquiry();
+});
+</script>
+</body>
+</html>
