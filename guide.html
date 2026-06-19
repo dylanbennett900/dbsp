@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The High Performance Puzzle — Free S&C Guide for Ultimate Frisbee</title>
+<meta name="description" content="Free strength & conditioning guide for Ultimate Frisbee players, from Dylan Bennett — National S&C Coach, Australian Sevens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:#1a3a5c;
+  --navy-deep:#0f2235;
+  --off-white:#f4f2ee;
+  --off-white2:#eceae5;
+  --cyan:#00d4ff;
+  --ink:#1a1a18;
+  --ink2:#4a4a46;
+  --ink3:#8a8a84;
+  --white:#ffffff;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--fb);
+  color:var(--ink);
+  background:var(--off-white);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  overflow:hidden;
+}
+
+.hero-img{
+  position:absolute;
+  inset:0;
+  background:url('nz.jpeg') center 20% / cover no-repeat;
+  z-index:0;
+}
+
+/* gradient: transparent at top, very dark at bottom */
+.hero-img::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(10,20,35,0.15) 0%,
+    rgba(10,20,35,0.25) 40%,
+    rgba(10,20,35,0.82) 75%,
+    rgba(10,20,35,0.96) 100%
+  );
+}
+
+.hero-content{
+  position:relative;
+  z-index:1;
+  padding:0 5vw 0;
+  max-width:860px;
+}
+
+/* credential strip */
+.cred-strip{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+}
+.cred-line{
+  width:32px;
+  height:2px;
+  background:var(--cyan);
+  flex-shrink:0;
+}
+.cred-text{
+  font-family:var(--fm);
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  white-space:nowrap;
+}
+
+.hero-eyebrow{
+  font-family:var(--fm);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+  margin-bottom:14px;
+}
+
+.hero-headline{
+  font-family:var(--fd);
+  font-size:clamp(52px,10vw,100px);
+  font-weight:900;
+  line-height:0.88;
+  text-transform:uppercase;
+  color:var(--white);
+  margin-bottom:24px;
+}
+.hero-headline em{
+  font-style:italic;
+  color:var(--cyan);
+}
+
+.hero-sub{
+  font-size:clamp(15px,2.2vw,18px);
+  color:rgba(255,255,255,0.75);
+  max-width:500px;
+  line-height:1.55;
+  margin-bottom:40px;
+  font-weight:300;
+}
+
+/* ── CREDENTIAL JERSEY TAG ────────────────────────────── */
+/* This is the signature element — a horizontal tag that sits between
+   hero and form, like a kit label stitched into the design */
+.jersey-tag{
+  position:relative;
+  z-index:1;
+  background:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  padding:0 5vw;
+  overflow:hidden;
+}
+
+.jersey-tag-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:0;
+  width:100%;
+  max-width:900px;
+  padding:18px 0;
+  border-top:1px solid rgba(255,255,255,0.08);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.tag-item{
+  display:flex;
+  align-items:center;
+  gap:0;
+}
+.tag-label{
+  font-family:var(--fm);
+  font-size:10.5px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+  padding:6px 20px;
+  white-space:nowrap;
+}
+.tag-label strong{
+  color:rgba(255,255,255,0.9);
+  font-weight:500;
+}
+.tag-sep{
+  width:1px;
+  height:24px;
+  background:rgba(255,255,255,0.15);
+}
+
+/* ── FORM SECTION ─────────────────────────────────────── */
+.form-section{
+  background:var(--off-white);
+  padding:72px 5vw 80px;
+}
+
+.form-inner{
+  max-width:860px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:start;
+}
+
+.form-left{}
+
+.section-eyebrow{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--navy);
+  margin-bottom:16px;
+  opacity:0.6;
+}
+
+.form-heading{
+  font-family:var(--fd);
+  font-size:clamp(36px,5vw,52px);
+  font-weight:900;
+  text-transform:uppercase;
+  line-height:0.92;
+  color:var(--navy);
+  margin-bottom:20px;
+}
+
+.form-desc{
+  font-size:15px;
+  color:var(--ink2);
+  line-height:1.6;
+  margin-bottom:28px;
+}
+
+/* what's inside */
+.inside-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.inside-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.45;
+}
+.inside-list li::before{
+  content:'';
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+  margin-top:1px;
+  background:var(--navy);
+  border-radius:3px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8l3.5 3.5L13 5' stroke='%2300d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:12px;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+
+/* form right */
+.form-right{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:36px 32px;
+  box-shadow:0 2px 24px rgba(26,58,92,0.07);
+}
+
+.form-card-title{
+  font-family:var(--fd);
+  font-size:22px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  color:var(--navy);
+  margin-bottom:6px;
+}
+.form-card-sub{
+  font-size:13px;
+  color:var(--ink3);
+  margin-bottom:28px;
+}
+
+.field-group{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-bottom:16px;
+}
+.field-group label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--ink3);
+}
+.field-group input{
+  width:100%;
+  padding:13px 16px;
+  border:1.5px solid rgba(0,0,0,0.12);
+  border-radius:5px;
+  font-family:var(--fb);
+  font-size:15px;
+  color:var(--ink);
+  background:var(--off-white);
+  transition:border-color 0.18s;
+  outline:none;
+}
+.field-group input:focus{
+  border-color:var(--navy);
+  background:var(--white);
+}
+.field-group input::placeholder{
+  color:var(--ink3);
+}
+
+.submit-btn{
+  width:100%;
+  padding:15px 24px;
+  background:var(--navy);
+  color:var(--white);
+  font-family:var(--fd);
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  transition:background 0.18s, transform 0.12s;
+  margin-top:8px;
+}
+.submit-btn:hover{
+  background:var(--navy-deep);
+}
+.submit-btn:active{
+  transform:scale(0.99);
+}
+.submit-btn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+.form-privacy{
+  font-size:11px;
+  color:var(--ink3);
+  text-align:center;
+  margin-top:14px;
+  line-height:1.5;
+}
+
+.form-error{
+  font-size:13px;
+  color:#c0392b;
+  margin-top:10px;
+  display:none;
+}
+
+/* ── THANK YOU STATE ──────────────────────────────────── */
+#form-state{display:block}
+#thankyou-state{display:none}
+
+.thankyou-card{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:36px 32px;
+  box-shadow:0 2px 24px rgba(26,58,92,0.07);
+  text-align:center;
+}
+.thankyou-icon{
+  width:52px;
+  height:52px;
+  background:var(--navy);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 20px;
+}
+.thankyou-icon svg{stroke:var(--cyan)}
+
+.thankyou-title{
+  font-family:var(--fd);
+  font-size:28px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:var(--navy);
+  margin-bottom:10px;
+  line-height:1;
+}
+.thankyou-msg{
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.6;
+  margin-bottom:28px;
+}
+.coaching-cta-btn{
+  display:inline-block;
+  padding:14px 28px;
+  background:var(--cyan);
+  color:var(--navy-deep);
+  font-family:var(--fd);
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  text-decoration:none;
+  border-radius:5px;
+  transition:opacity 0.18s;
+}
+.coaching-cta-btn:hover{opacity:0.88}
+.coaching-cta-note{
+  font-size:11px;
+  color:var(--ink3);
+  margin-top:12px;
+}
+
+/* ── SOCIAL PROOF STRIP ───────────────────────────────── */
+.proof-section{
+  background:var(--off-white2);
+  border-top:1px solid rgba(0,0,0,0.07);
+  padding:48px 5vw;
+}
+.proof-inner{
+  max-width:860px;
+  margin:0 auto;
+}
+.proof-eyebrow{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:28px;
+}
+.proof-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+.proof-card{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.07);
+  border-radius:6px;
+  padding:24px 20px;
+}
+.proof-number{
+  font-family:var(--fd);
+  font-size:40px;
+  font-weight:900;
+  color:var(--navy);
+  line-height:1;
+  margin-bottom:4px;
+}
+.proof-label{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.4;
+}
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer{
+  padding:28px 5vw;
+  border-top:1px solid rgba(0,0,0,0.07);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.footer-brand{
+  font-family:var(--fd);
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:0.1em;
+  color:var(--navy);
+}
+.footer-links{
+  display:flex;
+  gap:20px;
+}
+.footer-links a{
+  font-size:13px;
+  color:var(--ink3);
+  text-decoration:none;
+  transition:color 0.15s;
+}
+.footer-links a:hover{color:var(--navy)}
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:680px){
+  .form-inner{
+    grid-template-columns:1fr;
+    gap:36px;
+  }
+  .proof-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .tag-label{
+    font-size:9.5px;
+    padding:6px 12px;
+  }
+  .hero-content{
+    padding-bottom:0;
+  }
+}
+@media(max-width:420px){
+  .proof-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Free Guide — Dylan Bennett · DBSP</div>
+    <h1 class="hero-headline">
+      The High<br>
+      Performance<br>
+      <em>Puzzle</em>
+    </h1>
+    <p class="hero-sub">
+      The S&amp;C framework I use with national-level athletes — built for Ultimate Frisbee.
+      Strength, speed, conditioning, and recovery, in one free guide.
+    </p>
+  </div>
+</section>
+
+<!-- ── JERSEY TAG ─────────────────────────────────────────── -->
+<div class="jersey-tag">
+  <div class="jersey-tag-inner">
+    <div class="tag-item">
+      <span class="tag-label"><strong>Dylan Bennett</strong></span>
+      <span class="tag-sep"></span>
+    </div>
+    <div class="tag-item">
+      <span class="tag-label">National S&amp;C Coach · <strong>Australian Sevens Rugby</strong></span>
+      <span class="tag-sep"></span>
+    </div>
+    <div class="tag-item">
+      <span class="tag-label">Australian <strong>Dingoes</strong></span>
+      <span class="tag-sep"></span>
+    </div>
+    <div class="tag-item">
+      <span class="tag-label">Sydney <strong>Sunder</strong></span>
+      <span class="tag-sep"></span>
+    </div>
+    <div class="tag-item">
+      <span class="tag-label">BSc Sport Science</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── FORM SECTION ─────────────────────────────────────── -->
+<section class="form-section">
+  <div class="form-inner">
+
+    <!-- LEFT: what you get -->
+    <div class="form-left">
+      <p class="section-eyebrow">What's inside</p>
+      <h2 class="form-heading">Train smart.<br>Not just hard.</h2>
+      <p class="form-desc">
+        A 20-page guide covering the five physical qualities Ultimate Frisbee actually demands —
+        and how to develop them without guessing.
+      </p>
+      <ul class="inside-list">
+        <li>The five physical qualities frisbee actually demands — and the right ratios</li>
+        <li>How training adaptation really works (and why most players get it wrong)</li>
+        <li>On-field and gym work — how they interact</li>
+        <li>Recovery protocols: cold, heat, compression — what the evidence says</li>
+        <li>Match-week and training-week templates you can use immediately</li>
+        <li>Game-day nutrition from the night before to half time</li>
+        <li>Supplement guidance: what works, what doesn't, and why</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: form / thank you -->
+    <div class="form-right-wrap">
+
+      <!-- FORM STATE -->
+      <div id="form-state">
+        <div class="form-right" style="padding:0;border:none;box-shadow:none;background:transparent">
+          <div style="background:var(--white);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:36px 32px;box-shadow:0 2px 24px rgba(26,58,92,0.07);">
+            <p class="form-card-title">Get the free guide</p>
+            <p class="form-card-sub">Delivered instantly to your inbox. No spam, ever.</p>
+
+            <div class="field-group">
+              <label for="first-name">First name</label>
+              <input type="text" id="first-name" placeholder="Your first name" autocomplete="given-name" required>
+            </div>
+            <div class="field-group">
+              <label for="email">Email address</label>
+              <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
+            </div>
+
+            <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
+              Send me the guide
+            </button>
+            <p class="form-privacy">Free. No credit card. Unsubscribe any time.</p>
+            <p class="form-error" id="form-error">Something went wrong — please try again.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- THANK YOU STATE -->
+      <div id="thankyou-state">
+        <div class="thankyou-card">
+          <div class="thankyou-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h3 class="thankyou-title">Guide on its way</h3>
+          <p class="thankyou-msg">
+            Check your inbox — it'll be there in a minute.<br>
+            While you wait: if you want to take your training further,
+            I work with a small number of athletes one-on-one.
+          </p>
+          <a href="https://dbsportperformance.com#individual" class="coaching-cta-btn">
+            Work with me →
+          </a>
+          <p class="coaching-cta-note">Individual athlete coaching · Limited spots</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PROOF STRIP ─────────────────────────────────────── -->
+<section class="proof-section">
+  <div class="proof-inner">
+    <p class="proof-eyebrow">By the numbers</p>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-number">7+</div>
+        <div class="proof-label">Years coaching at national &amp; international level</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-number">2×</div>
+        <div class="proof-label">Australian Sevens Rugby — Men's &amp; Women's programs</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-number">Elite</div>
+        <div class="proof-label">Australian Dingoes player &amp; national Ultimate Frisbee competitor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────── -->
+<footer>
+  <div class="footer-brand">DBSP</div>
+  <nav class="footer-links">
+    <a href="https://dbsportperformance.com">Website</a>
+    <a href="https://instagram.com/dbsportperformance">Instagram</a>
+    <a href="https://frisbeetrack.app">Frisbee Track</a>
+    <a href="mailto:dylan@dbsportperformance.com">Contact</a>
+  </nav>
+</footer>
+
+<script>
+// ── RESEND CONFIG ──────────────────────────────────────────
+// Wire this to your Supabase edge function that handles Resend delivery.
+// Replace RESEND_ENDPOINT with your function URL.
+// The function should: save email to your list, send the HP Puzzle PDF via Resend.
+
+const RESEND_ENDPOINT = 'https://pfojdysbhnwxyjfgglls.supabase.co/functions/v1/send-guide-email';
+// ──────────────────────────────────────────────────────────
+
+async function handleSubmit() {
+  const nameInput  = document.getElementById('first-name');
+  const emailInput = document.getElementById('email');
+  const btn        = document.getElementById('submit-btn');
+  const errEl      = document.getElementById('form-error');
+
+  const name  = nameInput.value.trim();
+  const email = emailInput.value.trim();
+
+  errEl.style.display = 'none';
+
+  if (!name || !email || !email.includes('@')) {
+    errEl.textContent = 'Please fill in your name and a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch(RESEND_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+
+    if (!res.ok) throw new Error('Network response not ok');
+
+    // Show thank you
+    document.getElementById('form-state').style.display    = 'none';
+    document.getElementById('thankyou-state').style.display = 'block';
+
+  } catch (err) {
+    console.error(err);
+    errEl.textContent = 'Something went wrong — please try again or email dylan@dbsportperformance.com';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Send me the guide';
+  }
+}
+
+// Allow Enter key to submit
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const active = document.activeElement;
+    if (active && (active.id === 'first-name' || active.id === 'email')) {
+      handleSubmit();
+    }
+  }
+});
+</script>
+
+</body>
+</html>
