@@ -1,369 +1,12 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js" integrity="sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-      (function() {
-        // Capture host references before any artifact code runs: Window.parent
-        // is [Replaceable] (a top-level `var parent` in artifact code would
-        // replace the accessor with a data property), and a top-level
-        // `const crypto` would shadow the global — either would otherwise
-        // silently break the bridge for artifacts that worked before.
-        const realParent = window.parent;
-        const cryptoObj = window.crypto;
-        // crypto.randomUUID exists only in Secure Contexts; fall back to a
-        // unique non-crypto id elsewhere (http://LAN-IP dev flows) —
-        // uniqueness is what the bridge needs, unpredictability is
-        // defense-in-depth on top of the source guards.
-        const newRequestId =
-          cryptoObj && typeof cryptoObj.randomUUID === "function"
-            ? function () { return cryptoObj.randomUUID(); }
-            : function () { return Date.now() + "-" + Math.random(); };
-        const originalConsole = window.console;
-        window.console = {
-          log: (...args) => {
-            originalConsole.log(...args);
-            realParent.postMessage({ type: 'console', message: args.join(' ') }, '*');
-          },
-          error: (...args) => {
-            originalConsole.error(...args);
-            realParent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
-          },
-          warn: (...args) => {
-            originalConsole.warn(...args);
-            realParent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
-          }
-        };
-
-        // Bridge request ids are crypto-random (not sequential) so they
-        // cannot be predicted by other frames in the tab.
-        let callbacksMap = new Map();
-        let streamControllers = new Map();
-        
-        window.claude = {
-          complete: (prompt) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
-            });
-          }
-        };
-
-        window.storage = {
-          get: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageGet', id, key, shared }, '*');
-            });
-          },
-          set: (key, value, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
-            });
-          },
-          delete: (key, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
-            });
-          },
-          list: (prefix, shared = false) => {
-            return new Promise((resolve, reject) => {
-              const id = newRequestId();
-              callbacksMap.set(id, { resolve, reject });
-              realParent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
-            });
-          }
-        };
-
-        let pendingBlobs = new Map();
-        URL.createObjectURL = (blob) => {
-          // Store the blob and create an ID and URL for it
-          const blobId = `blob-${Date.now()}-${Math.random()}`;
-          pendingBlobs.set(blobId, blob);
-          return `blob-request://${blobId}`;
-        };
-
-        URL.revokeObjectURL = (url) => {
-          // Remove the blob from our store
-          const blobId = url.replace("blob-request://", "");
-          pendingBlobs.delete(blobId);
-        };
-
-        const getBlobFromURL = (url) => {
-          const blobId = url.replace("blob-request://", "");
-          return pendingBlobs.get(blobId);
-        };
-
-        // Override global fetch with streaming support
-        window.fetch = (url, init = {}) => {
-          return new Promise((resolve, reject) => {
-            const id = newRequestId();
-            const channelId = `fetch-${id}-${Date.now()}`;
-            
-            callbacksMap.set(id, { 
-              resolve: (response) => {
-                // Null-body statuses: Response(stream, {status: 204}) throws
-                // per the Fetch spec, which would escape this resolver and
-                // hang the artifact's await forever.
-                if (response.status === 204 || response.status === 205 || response.status === 304) {
-                  try {
-                    resolve(new Response(null, {
-                      status: response.status,
-                      statusText: response.statusText,
-                      headers: response.headers
-                    }));
-                  } catch (err) {
-                    // Invalid statusText/header bytes can throw here too.
-                    reject(new TypeError(
-                      'Bridge fetch: unconstructable response (status ' + response.status + ')'
-                    ));
-                  }
-                  return;
-                }
-                // Create a ReadableStream for the response body
-                const stream = new ReadableStream({
-                  start(controller) {
-                    streamControllers.set(channelId, controller);
-                  },
-                  cancel() {
-                    streamControllers.delete(channelId);
-                  }
-                });
-                
-                // Create and return the Response with the stream. Response()
-                // requires status in [200, 599]; an opaque/no-cors fetch
-                // forwards status 0, which would throw here and escape the
-                // resolver, hanging the artifact's await. Surface it as a
-                // network-error-shaped rejection instead.
-                try {
-                  resolve(new Response(stream, {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: response.headers
-                  }));
-                } catch (err) {
-                  streamControllers.delete(channelId);
-                  reject(new TypeError(
-                    'Bridge fetch: unconstructable response (status ' + response.status + ')'
-                  ));
-                }
-              },
-              reject,
-              channelId
-            });
-            
-            realParent.postMessage({
-              type: 'proxyFetch',
-              id,
-              url,
-              init,
-              channelId
-            }, '*');
-          });
-        };
-
-        window.addEventListener('message', async (event) => {
-          // Only the embedding parent may drive the bridge — sibling and
-          // nested frames can also postMessage into this window.
-          if (event.source !== realParent) return;
-          if (event.data.type === 'takeScreenshot') {
-            // Echo the request's nonce so the requester can correlate the
-            // reply to ITS request — a reply without the expected nonce
-            // (e.g. from a stale pre-remount artifact) is ignored upstream.
-            const screenshotNonce = event.data.nonce;
-            const rootElement = document.getElementById('artifacts-component-root-html');
-            if (!rootElement) {
-              realParent.postMessage({
-                type: 'screenshotError',
-                nonce: screenshotNonce,
-                error: new Error('Root element not found'),
-              }, '*');
-              return;
-            }
-            // Catch CDN load failures (htmlToImage undefined) and toPng errors
-            // so the parent always gets a response instead of hanging forever.
-            try {
-              const screenshot = await htmlToImage.toPng(rootElement, {
-                imagePlaceholder:
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
-              });
-              realParent.postMessage({
-                type: 'screenshotData',
-                nonce: screenshotNonce,
-                data: screenshot,
-              }, '*');
-            } catch (err) {
-              realParent.postMessage({
-                type: 'screenshotError',
-                nonce: screenshotNonce,
-                error: err instanceof Error ? err : new Error(String(err)),
-              }, '*');
-            }
-          } else if (event.data.type === 'claudeComplete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.completion);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'proxyFetchResponse') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-              callbacksMap.delete(event.data.id);
-            } else {
-              // Initial response with headers, status, etc.
-              callback.resolve({
-                status: event.data.status,
-                statusText: event.data.statusText,
-                headers: event.data.headers
-              });
-              // Don't delete the callback yet if streaming
-              if (!event.data.body) {
-                callbacksMap.delete(event.data.id);
-              }
-            }
-          } else if (event.data.type === 'proxyFetchStream') {
-            // Handle streaming data chunks
-            const controller = streamControllers.get(event.data.channelId);
-            if (controller) {
-              if (event.data.error) {
-                controller.error(new Error(event.data.error));
-                streamControllers.delete(event.data.channelId);
-              } else if (event.data.done) {
-                controller.close();
-                streamControllers.delete(event.data.channelId);
-                // Clean up the callback
-                const callback = Array.from(callbacksMap.entries()).find(
-                  ([_, value]) => value.channelId === event.data.channelId
-                );
-                if (callback) {
-                  callbacksMap.delete(callback[0]);
-                }
-              } else if (event.data.chunk) {
-                controller.enqueue(new Uint8Array(event.data.chunk));
-              }
-            }
-          } else if (event.data.type === 'storageGet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageSet') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageDelete') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          } else if (event.data.type === 'storageList') {
-            const callback = callbacksMap.get(event.data.id);
-            if (!callback) return;
-            if (event.data.error) {
-              callback.reject(new Error(event.data.error));
-            } else {
-              callback.resolve(event.data.result);
-            }
-            callbacksMap.delete(event.data.id);
-          }
-        });
-
-        window.addEventListener('click', (event) => {
-          const isEl = event.target instanceof HTMLElement;
-          if (!isEl) return;
-    
-          // find ancestor links
-          const linkEl = event.target.closest("a");
-          if (!linkEl || !linkEl.href) return;
-    
-          event.preventDefault();
-          event.stopImmediatePropagation();
-    
-          if (linkEl.href.startsWith("blob-request:")) {
-            const blob = getBlobFromURL(linkEl.href);
-            if (!blob) return;
-            void blob.arrayBuffer().then((data) => {
-              realParent.postMessage({
-                type: "downloadFile",
-                filename: linkEl.download,
-                data,
-                mimeType: blob.type || "application/octet-stream",
-              });
-            });
-          } else if (linkEl.href.startsWith("data:")) {
-            const [header, base64Data] = linkEl.href.split(",");
-            const mimeMatch = header.match(/data:([^;]+)/);
-            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
-            const binaryString = atob(base64Data);
-            const data = Uint8Array.from(binaryString, (c) =>
-              c.charCodeAt(0),
-            ).buffer;
-            realParent.postMessage({
-              type: "downloadFile",
-              filename: linkEl.download,
-              data,
-              mimeType,
-            });
-          } else {
-            let linkUrl;
-            try {
-              linkUrl = new URL(linkEl.href);
-            } catch (error) {
-              return;
-            }
-    
-            if (linkUrl.hostname === window.location.hostname) return;
-      
-            realParent.postMessage({
-              type: 'openExternal',
-              href: linkEl.href,
-            }, '*');
-          }
-      });
-
-        const originalOpen = window.open;
-        window.open = function (url) {
-          realParent.postMessage({
-            type: "openExternal",
-            href: url,
-          }, "*");
-        };
-
-        window.addEventListener('error', (event) => {
-          realParent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
-        });
-      })();
-    </script>
-  
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-editable="1">Work with Dylan Bennett | DBSP Sport Performance Coaching</title>
-<meta name="description" content="One-on-one S&amp;C coaching from Dylan Bennett, National S&amp;C Coach for Australian Sevens Rugby. Limited spots available.">
+<title>Work with Dylan Bennett | DBSP Sport Performance Coaching</title>
+<meta name="description" content="One-on-one S&C coaching from Dylan Bennett, National S&C Coach for Australian Sevens Rugby. Limited spots available.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&amp;family=DM+Sans:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1061,7 +704,7 @@ footer{
 }
 </style>
 </head>
-<body id="artifacts-component-root-html" class="">
+<body>
 
 <!-- HERO -->
 <section class="hero">
@@ -1071,31 +714,32 @@ footer{
   <div class="ticker-bar">
     <div class="ticker-track">
       <!-- duplicated for seamless loop -->
-      <div class="ticker-item"><strong data-editable="1">National S&amp;C Coach</strong><span class="ticker-dot"></span><span data-editable="1">Australian Sevens Rugby</span></div>
-      <div class="ticker-item"><strong data-editable="1">Australian Dingoes</strong><span class="ticker-dot"></span><span data-editable="1">Elite Player &amp; Coach</span></div>
-      <div class="ticker-item"><strong data-editable="1">Sydney Sunder</strong><span class="ticker-dot"></span><span data-editable="1">Hessss</span></div>
-      <div class="ticker-item"><strong data-editable="1">BSc Sport Science</strong><span class="ticker-dot"></span><span data-editable="1">7+ Years National Level</span></div>
-      <div class="ticker-item"><strong data-editable="1">Rogue Ultimate</strong><span class="ticker-dot"></span><span data-editable="1">S&amp;C Coach</span></div>
-      <div class="ticker-item"><strong data-editable="1">National S&amp;C &amp; Rehab&nbsp;Coach</strong><span class="ticker-dot"></span><span data-editable="1">Australian Sevens Rugby</span></div>
-      <div class="ticker-item"><strong data-editable="1">Australian Dingoes</strong><span class="ticker-dot"></span><span data-editable="1">Elite Player</span></div>
-      <div class="ticker-item"><strong data-editable="1">Sydney Sunder</strong><span class="ticker-dot"></span><span data-editable="1">Elite player</span></div>
-      <div class="ticker-item"><strong data-editable="1">Masters of High Perfprmance sport</strong><span class="ticker-dot"></span><span data-editable="1">7+ Years National S&amp;C Coaching<br></span></div>
-      <div class="ticker-item"><strong data-editable="1">Rogue Ultimate</strong><span class="ticker-dot"></span><span data-editable="1">S&amp;C Coach</span></div>
+      <div class="ticker-item"><strong>National S&amp;C Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
+      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player &amp; Coach</span></div>
+      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Head S&amp;C</span></div>
+      <div class="ticker-item"><strong>BSc Sport Science</strong><span class="ticker-dot"></span><span>7+ Years National Level</span></div>
+      <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
+      <div class="ticker-item"><strong>National S&amp;C Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
+      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player &amp; Coach</span></div>
+      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Head S&amp;C</span></div>
+      <div class="ticker-item"><strong>BSc Sport Science</strong><span class="ticker-dot"></span><span>7+ Years National Level</span></div>
+      <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
     </div>
   </div>
 
   <div class="hero-content">
-    <p class="hero-eyebrow" data-editable="1"><br></p>
-    <h1 class="hero-headline" data-editable="1">
-      Train the way<br>professional athletes<br>
+    <p class="hero-eyebrow">Individual Athlete Coaching · DBSP</p>
+    <h1 class="hero-headline">
+      Train the way<br>
+      national athletes<br>
       <em>actually do</em>
     </h1>
-    <p class="hero-sub" data-editable="1">
-      One-on-one S&amp;C coaching from Dylan Bennett, the Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby program. Built for Ultimate Frisbee athletes serious about their physical preparation.
+    <p class="hero-sub">
+      One-on-one S&amp;C coaching from Dylan Bennett, the sport scientist behind the Australian Sevens Rugby program. Built for Ultimate Frisbee athletes serious about their physical preparation.
     </p>
     <div class="hero-ctas">
-      <a href="#apply" class="btn-primary" data-editable="1">Apply to work with me</a>
-      <a href="#guide" class="btn-ghost" data-editable="1">Get the free guide first</a>
+      <a href="#apply" class="btn-primary">Apply to work with me</a>
+      <a href="#guide" class="btn-ghost">Get the free guide first</a>
     </div>
   </div>
 </section>
@@ -1104,28 +748,28 @@ footer{
 <section class="problem">
   <div class="problem-inner">
     <div>
-      <p class="problem-label" data-editable="1">The problem</p>
-      <h2 class="problem-headline" data-editable="1">Most frisbee players train hard.<br>Almost none train <em style="font-style:italic;color:var(--cyan)">right</em>.</h2>
-      <p class="problem-body" data-editable="1">
-        No load monitoring. No periodisation. No idea whether they're building towards peak performance or just accumulating fatigue. The gap between training hard and training <em>right</em> is where injuries happen and performance is affected. It's completely fixable with the right framework.
+      <p class="problem-label">The problem</p>
+      <h2 class="problem-headline">Most frisbee players train hard.<br>Almost none train <em style="font-style:italic;color:var(--cyan)">right</em>.</h2>
+      <p class="problem-body">
+        No load monitoring. No periodisation. No idea whether they're building towards peak performance or just accumulating fatigue. The gap between training hard and training <em>right</em> is where injuries happen and careers plateau. It's completely fixable with the right framework.
       </p>
     </div>
     <div class="problem-stat-grid">
       <div class="stat-card">
-        <div class="stat-num" data-editable="1">7+</div>
-        <div class="stat-label" data-editable="1">Years S&amp;C coaching in Professional Sport</div>
+        <div class="stat-num">7+</div>
+        <div class="stat-label">Years coaching at national &amp; international level</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num" data-editable="1">10+</div>
-        <div class="stat-label" data-editable="1">Years elite ultimate frisbee playing experience. AUS Dingoes &amp; Sunder player</div>
+        <div class="stat-num">2</div>
+        <div class="stat-label">Australian Sevens programs, Men's &amp; Women's</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num" data-editable="1">250+</div>
-        <div class="stat-label" data-editable="1">Frisbee players coached</div>
+        <div class="stat-num">Elite</div>
+        <div class="stat-label">Dingoes &amp; Sunder player, competing at the top level</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num" data-editable="1">GPS</div>
-        <div class="stat-label" data-editable="1">Data-driven methodology, not guesswork</div>
+        <div class="stat-num">GPS</div>
+        <div class="stat-label">Data-driven methodology, not guesswork</div>
       </div>
     </div>
   </div>
@@ -1134,24 +778,24 @@ footer{
 <!-- WHO IT'S FOR -->
 <section class="for-who">
   <div class="for-who-inner">
-    <p class="section-eyebrow" data-editable="1">Who this is for</p>
-    <h2 class="section-h" data-editable="1">The right fit matters</h2>
+    <p class="section-eyebrow">Who this is for</p>
+    <h2 class="section-h">The right fit matters</h2>
     <div class="who-grid">
       <div class="who-card fit">
-        <p class="who-card-label" data-editable="1">Good fit</p>
+        <p class="who-card-label">Good fit</p>
         <ul class="who-list">
-          <li data-editable="1">Club or national-level players serious about physical preparation</li>
-          <li data-editable="1">Athletes returning from injury who need a structured pathway back</li>
-          <li data-editable="1">Players who've hit a performance ceiling and want to break through</li>
-          <li data-editable="1">People who want a program built around their life, not a template</li>
+          <li>Club or national-level players serious about physical preparation</li>
+          <li>Athletes returning from injury who need a structured pathway back</li>
+          <li>Players who've hit a performance ceiling and want to break through</li>
+          <li>People who want a program built around their life, not a template</li>
         </ul>
       </div>
       <div class="who-card notfit">
-        <p class="who-card-label" data-editable="1">Not the right fit</p>
+        <p class="who-card-label">Not the right fit</p>
         <ul class="who-list">
-          <li data-editable="1">If you want a generic off-the-shelf program</li>
-          <li data-editable="1">If you're not willing to commit to consistent weekly effort</li>
-          <li data-editable="1">If the goal is just "get a bit fitter" without specific targets</li>
+          <li>If you want a generic off-the-shelf program</li>
+          <li>If you're not willing to commit to consistent weekly effort</li>
+          <li>If the goal is just "get a bit fitter" without specific targets</li>
         </ul>
       </div>
     </div>
@@ -1161,28 +805,28 @@ footer{
 <!-- HOW IT WORKS -->
 <section class="process">
   <div class="process-inner">
-    <p class="section-eyebrow" data-editable="1">How it works</p>
-    <h2 class="section-h" data-editable="1">A clear process,<br>from day one</h2>
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-h">A clear process,<br>from day one</h2>
     <div class="process-steps">
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">01</div></div>
-        <p class="step-label" data-editable="1">Apply</p>
-        <p class="step-sub" data-editable="1">Short form. Tell me where you're at and what you're working towards</p>
+        <p class="step-label">Apply</p>
+        <p class="step-sub">Short form. Tell me where you're at and what you're working towards</p>
       </div>
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">02</div></div>
-        <p class="step-label" data-editable="1">Discovery call</p>
-        <p class="step-sub" data-editable="1">30 min. I assess your current state and training history</p>
+        <p class="step-label">Discovery call</p>
+        <p class="step-sub">30 min. I assess your current state and training history</p>
       </div>
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">03</div></div>
-        <p class="step-label" data-editable="1">Program build</p>
-        <p class="step-sub" data-editable="1">Custom block designed around your schedule, season &amp; goals</p>
+        <p class="step-label">Program build</p>
+        <p class="step-sub">Custom block designed around your schedule, season &amp; goals</p>
       </div>
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">04</div></div>
-        <p class="step-label" data-editable="1">Weekly check-ins</p>
-        <p class="step-sub" data-editable="1">Adjust, progress, and keep the program honest with real data</p>
+        <p class="step-label">Weekly check-ins</p>
+        <p class="step-sub">Adjust, progress, and keep the program honest with real data</p>
       </div>
     </div>
   </div>
@@ -1192,21 +836,21 @@ footer{
 <section class="coaching-cta" id="apply">
   <div class="coaching-inner">
     <div>
-      <p class="cta-eyebrow" data-editable="1">Limited spots · Sydney &amp; Remote</p>
-      <h2 class="cta-headline" data-editable="1">Work with me<br>one-on-one</h2>
-      <p class="cta-body" data-editable="1">
+      <p class="cta-eyebrow">Limited spots · Sydney &amp; Remote</p>
+      <h2 class="cta-headline">Work with me<br>one-on-one</h2>
+      <p class="cta-body">
         I work with a small number of athletes at a time. That means your program gets genuine attention, not a template with your name on it.
       </p>
       <ul class="includes-list">
-        <li data-editable="1">Custom training block built around your season &amp; goals</li>
-        <li data-editable="1">GPS-informed load management, the same methodology as national programs</li>
-        <li data-editable="1">Weekly check-ins and program adjustments based on real data</li>
-        <li data-editable="1">Gym and field sessions that actually complement each other</li>
-        <li data-editable="1">Delivered via Teambuildr. Clear, accessible, and trackable</li>
+        <li>Custom training block built around your season &amp; goals</li>
+        <li>GPS-informed load management, the same methodology as national programs</li>
+        <li>Weekly check-ins and program adjustments based on real data</li>
+        <li>Gym and field sessions that actually complement each other</li>
+        <li>Delivered via Teambuildr. Clear, accessible, and trackable</li>
       </ul>
       <div class="cta-availability">
         <span class="avail-dot"></span>
-        <span class="avail-text" data-editable="1">Taking applications · limited spots available</span>
+        <span class="avail-text">Taking applications · limited spots available</span>
       </div>
     </div>
 
@@ -1214,8 +858,8 @@ footer{
     <div>
       <div id="apply-form-state">
         <div class="apply-card">
-          <p class="apply-card-title" data-editable="1">Start your application</p>
-          <p class="apply-card-sub" data-editable="1">Tell me a bit about where you're at. If it looks like a fit, I'll be in touch to arrange a call.</p>
+          <p class="apply-card-title">Start your application</p>
+          <p class="apply-card-sub">Tell me a bit about where you're at. If it looks like a fit, I'll be in touch to arrange a call.</p>
           <div class="field-group">
             <label for="apply-name">Name</label>
             <input type="text" id="apply-name" placeholder="Your full name" autocomplete="name">
@@ -1227,7 +871,7 @@ footer{
           <div class="field-group">
             <label for="apply-level">Playing level</label>
             <select id="apply-level">
-              <option value="" disabled="" selected="">Select your level</option>
+              <option value="" disabled selected>Select your level</option>
               <option>State / Club elite</option>
               <option>National squad / representative</option>
               <option>International</option>
@@ -1240,7 +884,7 @@ footer{
             <textarea id="apply-goal" rows="3" placeholder="e.g. returning from a hamstring injury, preparing for nationals, want to improve my speed..."></textarea>
           </div>
           <button class="submit-btn" id="apply-btn" onclick="handleApply()">Send my application</button>
-          <p class="form-note" data-editable="1">I aim to reply within 2–3 days.</p>
+          <p class="form-note">I aim to reply within 2–3 days.</p>
           <p class="form-error" id="apply-error"></p>
         </div>
       </div>
@@ -1249,11 +893,11 @@ footer{
         <div class="apply-card">
           <div class="ty-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 13l4 4L19 7"></path>
+              <path d="M5 13l4 4L19 7"/>
             </svg>
           </div>
-          <p class="ty-title" data-editable="1">Application received</p>
-          <p class="ty-msg" data-editable="1">I'll review it and be in touch within a couple of days. In the meantime, the free guide below is worth a read.</p>
+          <p class="ty-title">Application received</p>
+          <p class="ty-msg">I'll review it and be in touch within a couple of days. In the meantime, the free guide below is worth a read.</p>
         </div>
       </div>
     </div>
@@ -1265,31 +909,31 @@ footer{
   <div class="not-ready-inner">
     <div class="divider-label">
       <div class="divider-line"></div>
-      <span class="divider-text" data-editable="1">Not ready to apply yet?</span>
+      <span class="divider-text">Not ready to apply yet?</span>
       <div class="divider-line"></div>
     </div>
 
     <div class="guide-block">
       <div class="guide-left">
-        <p class="section-eyebrow" data-editable="1">Free guide</p>
-        <h2 class="section-h" style="font-size:clamp(28px,4vw,40px)" data-editable="1">The High Performance Puzzle</h2>
-        <p class="guide-desc" data-editable="1">
+        <p class="section-eyebrow">Free guide</p>
+        <h2 class="section-h" style="font-size:clamp(28px,4vw,40px)">The High Performance Puzzle</h2>
+        <p class="guide-desc">
           The S&amp;C framework I use with national athletes, built for Ultimate Frisbee. Twenty pages covering what the game actually demands physically, and how to prepare for it.
         </p>
         <ul class="guide-bullets">
-          <li data-editable="1">The five physical qualities frisbee actually demands</li>
-          <li data-editable="1">How training adaptation really works</li>
-          <li data-editable="1">On-field &amp; gym work and how they interact</li>
-          <li data-editable="1">Match-week templates &amp; recovery protocols</li>
-          <li data-editable="1">Game-day nutrition from the night before to half time</li>
+          <li>The five physical qualities frisbee actually demands</li>
+          <li>How training adaptation really works</li>
+          <li>On-field &amp; gym work and how they interact</li>
+          <li>Match-week templates &amp; recovery protocols</li>
+          <li>Game-day nutrition from the night before to half time</li>
         </ul>
       </div>
 
       <div>
         <div class="guide-form-card">
           <div id="guide-form-state">
-            <p class="guide-form-title" data-editable="1">Get the free guide</p>
-            <p class="guide-form-sub" data-editable="1">Delivered to your inbox. No spam, ever.</p>
+            <p class="guide-form-title">Get the free guide</p>
+            <p class="guide-form-sub">Delivered to your inbox. No spam, ever.</p>
             <div class="field-group">
               <label for="guide-name">First name</label>
               <input type="text" id="guide-name" placeholder="Your first name" autocomplete="given-name">
@@ -1299,7 +943,7 @@ footer{
               <input type="email" id="guide-email" placeholder="you@email.com" autocomplete="email">
             </div>
             <button class="guide-submit-btn" id="guide-btn" onclick="handleGuide()">Send me the guide</button>
-            <p class="form-note" style="margin-top:10px" data-editable="1">Free. No credit card. Unsubscribe any time.</p>
+            <p class="form-note" style="margin-top:10px">Free. No credit card. Unsubscribe any time.</p>
             <p class="form-error" id="guide-error"></p>
           </div>
           <div class="guide-ty" id="guide-thankyou">
@@ -1313,12 +957,12 @@ footer{
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand" data-editable="1">DBSP</div>
+  <div class="footer-brand">DBSP</div>
   <nav class="footer-links">
-    <a data-editable="1" data-href="https://dbsportperformance.com/">Website</a>
-    <a data-editable="1" data-href="https://instagram.com/dbsportperformance">Instagram</a>
-    <a data-editable="1" data-href="https://dylanbennett900.github.io/disc-load">Frisbee Track</a>
-    <a data-editable="1" data-href="mailto:dbsportperformance@gmail.com">Contact</a>
+    <a href="https://dbsportperformance.com">Website</a>
+    <a href="https://instagram.com/dbsportperformance">Instagram</a>
+    <a href="https://dylanbennett900.github.io/disc-load">Frisbee Track</a>
+    <a href="mailto:dbsportperformance@gmail.com">Contact</a>
   </nav>
 </footer>
 
@@ -1412,12 +1056,85 @@ document.addEventListener("keydown", (e) => {
 
 
 <!-- ── EDIT MODE ──────────────────────────────────────────────────── -->
+<style id="edit-mode-styles" disabled>
+.edit-bar{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:#1a3a5c;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 18px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+.edit-bar-label{color:rgba(255,255,255,0.5);letter-spacing:.12em;text-transform:uppercase}
+.edit-bar-hint{color:#00d4ff;letter-spacing:.08em}
+.edit-bar-btn{
+  margin-left:auto;
+  padding:7px 16px;
+  background:#00d4ff;
+  color:#0f2235;
+  border:none;
+  border-radius:3px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.edit-bar-btn:hover{opacity:.85}
+.edit-bar-btn.copied{background:#00e87a}
+.edit-done-btn{
+  padding:7px 16px;
+  background:transparent;
+  color:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:3px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color .15s;
+}
+.edit-done-btn:hover{border-color:rgba(255,255,255,0.5);color:#fff}
 
+/* Editable elements highlight */
+[data-editable]:hover{
+  outline:2px dashed rgba(0,212,255,0.5);
+  outline-offset:2px;
+  cursor:text;
+}
+[data-editable]:focus{
+  outline:2px solid #00d4ff;
+  outline-offset:2px;
+  background:rgba(0,212,255,0.04);
+}
+body.editing-mode{padding-top:46px}
+</style>
 
-
+<div class="edit-bar" id="edit-bar" style="display:none">
+  <span class="edit-bar-label">Edit mode</span>
+  <span class="edit-bar-hint">Click any text to edit it inline</span>
+  <button class="edit-done-btn" onclick="toggleEdit()">Done</button>
+  <button class="edit-bar-btn" id="copy-btn" onclick="copyCode()">Copy HTML</button>
+</div>
 
 <!-- Floating toggle button (visible when NOT in edit mode) -->
-
+<button id="edit-toggle-btn" onclick="toggleEdit()" style="
+  position:fixed;bottom:24px;right:24px;z-index:9998;
+  padding:10px 18px;
+  background:#1a3a5c;
+  color:#fff;
+  border:none;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,0.25);
+  transition:background .15s;
+">Edit text</button>
 
 <script>
 (function(){
@@ -1429,8 +1146,7 @@ document.addEventListener("keydown", (e) => {
     '.hero-eyebrow',
     '.hero-headline',
     '.hero-sub',
-    '.btn-primary',
-    '.btn-ghost',
+
     // Ticker items (text spans only)
     '.ticker-item strong',
     '.ticker-item span:not(.ticker-dot)',
@@ -1580,5 +1296,5 @@ document.addEventListener("keydown", (e) => {
 })();
 </script>
 
-
-</body></html>
+</body>
+</html>
