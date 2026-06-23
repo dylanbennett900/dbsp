@@ -719,10 +719,10 @@ footer{
       <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Head S&amp;C</span></div>
       <div class="ticker-item"><strong>BSc Sport Science</strong><span class="ticker-dot"></span><span>7+ Years National Level</span></div>
       <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
-      <div class="ticker-item"><strong>National S&amp;C Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
-      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player &amp; Coach</span></div>
-      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Head S&amp;C</span></div>
-      <div class="ticker-item"><strong>BSc Sport Science</strong><span class="ticker-dot"></span><span>7+ Years National Level</span></div>
+      <div class="ticker-item"><strong>National S&amp;C &amp; Rehab Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
+      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player</span></div>
+      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Elite Player</span></div>
+      <div class="ticker-item"><strong>Masters of High Performance Sport</strong><span class="ticker-dot"></span><span>7+ Years National S&amp;C Coaching</span></div>
       <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
     </div>
   </div>
@@ -731,11 +731,11 @@ footer{
     <p class="hero-eyebrow">Individual Athlete Coaching · DBSP</p>
     <h1 class="hero-headline">
       Train the way<br>
-      national athletes<br>
+      professional athletes<br>
       <em>actually do</em>
     </h1>
     <p class="hero-sub">
-      One-on-one S&amp;C coaching from Dylan Bennett, the sport scientist behind the Australian Sevens Rugby program. Built for Ultimate Frisbee athletes serious about their physical preparation.
+      One-on-one S&amp;C coaching from Dylan Bennett, National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby program. Built for Ultimate Frisbee athletes serious about their physical preparation.
     </p>
     <div class="hero-ctas">
       <a href="#apply" class="btn-primary">Apply to work with me</a>
@@ -751,7 +751,7 @@ footer{
       <p class="problem-label">The problem</p>
       <h2 class="problem-headline">Most frisbee players train hard.<br>Almost none train <em style="font-style:italic;color:var(--cyan)">right</em>.</h2>
       <p class="problem-body">
-        No load monitoring. No periodisation. No idea whether they're building towards peak performance or just accumulating fatigue. The gap between training hard and training <em>right</em> is where injuries happen and careers plateau. It's completely fixable with the right framework.
+        No load monitoring. No periodisation. No idea whether they're building towards peak performance or just accumulating fatigue. The gap between training hard and training <em>right</em> is where injuries happen and where injuries happen and performance is affected. It's completely fixable with the right framework.
       </p>
     </div>
     <div class="problem-stat-grid">
@@ -761,10 +761,10 @@ footer{
       </div>
       <div class="stat-card">
         <div class="stat-num">2</div>
-        <div class="stat-label">Australian Sevens programs, Men's &amp; Women's</div>
+        <div class="stat-label">Australian Sevens programs</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">Elite</div>
+        <div class="stat-num">Elite Experience</div>
         <div class="stat-label">Dingoes &amp; Sunder player, competing at the top level</div>
       </div>
       <div class="stat-card">
@@ -1055,246 +1055,6 @@ document.addEventListener("keydown", (e) => {
 </script>
 
 
-<!-- ── EDIT MODE ──────────────────────────────────────────────────── -->
-<style id="edit-mode-styles" disabled>
-.edit-bar{
-  position:fixed;top:0;left:0;right:0;z-index:9999;
-  background:#1a3a5c;
-  display:flex;align-items:center;gap:12px;
-  padding:10px 18px;
-  font-family:"JetBrains Mono",monospace;
-  font-size:11px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.3);
-}
-.edit-bar-label{color:rgba(255,255,255,0.5);letter-spacing:.12em;text-transform:uppercase}
-.edit-bar-hint{color:#00d4ff;letter-spacing:.08em}
-.edit-bar-btn{
-  margin-left:auto;
-  padding:7px 16px;
-  background:#00d4ff;
-  color:#0f2235;
-  border:none;
-  border-radius:3px;
-  font-family:"JetBrains Mono",monospace;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:opacity .15s;
-}
-.edit-bar-btn:hover{opacity:.85}
-.edit-bar-btn.copied{background:#00e87a}
-.edit-done-btn{
-  padding:7px 16px;
-  background:transparent;
-  color:rgba(255,255,255,0.6);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:3px;
-  font-family:"JetBrains Mono",monospace;
-  font-size:11px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:border-color .15s;
-}
-.edit-done-btn:hover{border-color:rgba(255,255,255,0.5);color:#fff}
-
-/* Editable elements highlight */
-[data-editable]:hover{
-  outline:2px dashed rgba(0,212,255,0.5);
-  outline-offset:2px;
-  cursor:text;
-}
-[data-editable]:focus{
-  outline:2px solid #00d4ff;
-  outline-offset:2px;
-  background:rgba(0,212,255,0.04);
-}
-body.editing-mode{padding-top:46px}
-</style>
-
-<div class="edit-bar" id="edit-bar" style="display:none">
-  <span class="edit-bar-label">Edit mode</span>
-  <span class="edit-bar-hint">Click any text to edit it inline</span>
-  <button class="edit-done-btn" onclick="toggleEdit()">Done</button>
-  <button class="edit-bar-btn" id="copy-btn" onclick="copyCode()">Copy HTML</button>
-</div>
-
-<!-- Floating toggle button (visible when NOT in edit mode) -->
-<button id="edit-toggle-btn" onclick="toggleEdit()" style="
-  position:fixed;bottom:24px;right:24px;z-index:9998;
-  padding:10px 18px;
-  background:#1a3a5c;
-  color:#fff;
-  border:none;border-radius:4px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;
-  cursor:pointer;
-  box-shadow:0 2px 12px rgba(0,0,0,0.25);
-  transition:background .15s;
-">Edit text</button>
-
-<script>
-(function(){
-  // Elements to make editable — selectors targeting user-visible text nodes only
-  const EDITABLE_SELECTORS = [
-    // Meta / title
-    'title',
-    // Hero
-    '.hero-eyebrow',
-    '.hero-headline',
-    '.hero-sub',
-
-    // Ticker items (text spans only)
-    '.ticker-item strong',
-    '.ticker-item span:not(.ticker-dot)',
-    // Problem
-    '.problem-label',
-    '.problem-headline',
-    '.problem-body',
-    '.stat-num',
-    '.stat-label',
-    // Who
-    '.section-eyebrow',
-    '.section-h',
-    '.who-card-label',
-    '.who-list li',
-    // Process
-    '.step-label',
-    '.step-sub',
-    // Coaching CTA
-    '.cta-eyebrow',
-    '.cta-headline',
-    '.cta-body',
-    '.includes-list li',
-    '.avail-text',
-    // Apply card
-    '.apply-card-title',
-    '.apply-card-sub',
-    '.form-note',
-    '.ty-title',
-    '.ty-msg',
-    // Divider
-    '.divider-text',
-    // Guide
-    '.guide-form-title',
-    '.guide-form-sub',
-    '.guide-desc',
-    '.guide-bullets li',
-    // Footer
-    '.footer-brand',
-    '.footer-links a',
-  ];
-
-  let editMode = false;
-
-  function toggleEdit() {
-    editMode = !editMode;
-    const bar = document.getElementById("edit-bar");
-    const toggleBtn = document.getElementById("edit-toggle-btn");
-    const styles = document.getElementById("edit-mode-styles");
-
-    if (editMode) {
-      bar.style.display = "flex";
-      toggleBtn.style.display = "none";
-      styles.disabled = false;
-      document.body.classList.add("editing-mode");
-      enableEditables();
-    } else {
-      bar.style.display = "none";
-      toggleBtn.style.display = "block";
-      styles.disabled = true;
-      document.body.classList.remove("editing-mode");
-      disableEditables();
-    }
-  }
-
-  function enableEditables() {
-    EDITABLE_SELECTORS.forEach(sel => {
-      try {
-        document.querySelectorAll(sel).forEach(el => {
-          // Skip elements with complex children (forms, buttons with handlers)
-          if (el.tagName === "BUTTON" && el.id) return;
-          if (el.tagName === "A" && el.closest("nav")) {
-            el.setAttribute("data-editable", "1");
-            el.contentEditable = "true";
-            el.setAttribute("data-href", el.href);
-            el.removeAttribute("href"); // prevent navigation while editing
-          } else {
-            el.setAttribute("data-editable", "1");
-            el.contentEditable = "true";
-          }
-        });
-      } catch(e) {}
-    });
-    // Title element special case
-    const titleEl = document.querySelector("title");
-    if (titleEl) titleEl.contentEditable = "true";
-  }
-
-  function disableEditables() {
-    document.querySelectorAll("[data-editable]").forEach(el => {
-      el.contentEditable = "false";
-      el.removeAttribute("data-editable");
-      // Restore links
-      if (el.hasAttribute("data-href")) {
-        el.href = el.getAttribute("data-href");
-        el.removeAttribute("data-href");
-      }
-    });
-  }
-
-  function copyCode() {
-    // Temporarily disable editability so the HTML is clean
-    document.querySelectorAll("[data-editable]").forEach(el => {
-      el.removeAttribute("contenteditable");
-    });
-
-    // Remove edit UI from the clone
-    const clone = document.documentElement.cloneNode(true);
-    clone.querySelector("#edit-bar")?.remove();
-    clone.querySelector("#edit-toggle-btn")?.remove();
-    clone.querySelector("#edit-mode-styles")?.remove();
-    const editScript = clone.querySelector("script[id='edit-script']");
-    if (editScript) editScript.remove();
-    // Remove padding-top from body
-    const bodyEl = clone.querySelector("body");
-    if (bodyEl) bodyEl.classList.remove("editing-mode");
-
-    const html = "<!DOCTYPE html>\n" + clone.outerHTML;
-
-    navigator.clipboard.writeText(html).then(() => {
-      const btn = document.getElementById("copy-btn");
-      btn.textContent = "Copied!";
-      btn.classList.add("copied");
-      setTimeout(() => {
-        btn.textContent = "Copy HTML";
-        btn.classList.remove("copied");
-      }, 2500);
-    }).catch(() => {
-      // Fallback
-      const ta = document.createElement("textarea");
-      ta.value = html;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      document.getElementById("copy-btn").textContent = "Copied!";
-    });
-
-    // Re-enable editables
-    document.querySelectorAll("[data-editable]").forEach(el => {
-      el.setAttribute("contenteditable", "true");
-    });
-  }
-
-  // Expose toggleEdit globally
-  window.toggleEdit = toggleEdit;
-  window.copyCode = copyCode;
-})();
-</script>
 
 </body>
 </html>
