@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dylan Bennett &mdash; DBSP</title>
+<title>Dylan Bennett | DBSP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -13,6 +13,7 @@
   --border:rgba(0,0,0,0.09);--border-s:rgba(0,0,0,0.16);
   --ink:#1a1a18;--ink2:#4a4a46;--ink3:#8a8a84;
   --accent:#1a3a5c;--accent-l:#e8f0fa;--accent-m:#2d62a0;
+  --cyan:#00d4ff;--cyan-l:rgba(0,212,255,0.1);--cyan-dark:#00b8d9;
   --fd:'Barlow Condensed',sans-serif;--fb:'DM Sans',sans-serif;
 }
 html{scroll-behavior:smooth}
@@ -32,7 +33,7 @@ section:last-of-type{border-bottom:none}
 .hero-inner{display:grid;grid-template-columns:1fr 1fr;min-height:90vh}
 .hero-content{padding:80px 52px 80px 40px;display:flex;flex-direction:column;justify-content:center}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-l);border:1px solid rgba(45,98,160,.22);color:var(--accent);font-size:11px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;padding:5px 12px;border-radius:3px;margin-bottom:28px;width:fit-content}
-.hero-eyebrow::before{content:'';width:6px;height:6px;background:var(--accent-m);border-radius:50%}
+.hero-eyebrow::before{content:'';width:6px;height:6px;background:var(--cyan);border-radius:50%}
 .hero h1{font-family:var(--fd);font-size:clamp(68px,8.5vw,116px);font-weight:900;line-height:.9;letter-spacing:-.01em;text-transform:uppercase;color:var(--ink);margin-bottom:28px}
 .hero h1 em{color:var(--accent-m);font-style:normal}
 .hero-sub{font-size:17px;color:var(--ink2);max-width:460px;line-height:1.72;margin-bottom:38px}
@@ -43,13 +44,13 @@ section:last-of-type{border-bottom:none}
 .btn-ghost:hover{background:var(--bg2)}
 .hero-stats{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .stat{background:var(--panel);padding:18px 20px}
-.stat-num{font-family:var(--fd);font-size:30px;font-weight:900;color:var(--accent);line-height:1;margin-bottom:3px}
+.stat-num{font-family:var(--fd);font-size:30px;font-weight:900;color:var(--cyan-dark);line-height:1;margin-bottom:3px}
 .stat-label{font-size:11px;color:var(--ink3);line-height:1.4}
 .hero-img-wrap{position:relative;overflow:hidden}
 .hero-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .hero-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(244,242,238,.08) 0%,transparent 30%);pointer-events:none}
 .section-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:56px}
-.section-tag-line{height:1px;width:40px;background:var(--accent-m)}
+.section-tag-line{height:1px;width:40px;background:var(--cyan)}
 .section-tag-text{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-m)}
 .about-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:72px;align-items:start}
 .about-photo-stack{display:flex;flex-direction:column;gap:8px;margin-top:24px}
@@ -173,6 +174,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
   .hero-inner,.about-grid,.ind-hero-grid,.frisbee-intro,.app-grid,.ebook-grid{grid-template-columns:1fr}
   .hero-img-wrap{min-height:50vw}
   .services-with-photo,.services-grid,.how-grid,.ind-price-grid,.pkg-grid{grid-template-columns:1fr}
+  [style*="grid-template-columns:repeat(3,1fr)"]{grid-template-columns:1fr!important}
   .proof-strip{grid-template-columns:1fr 1fr}
   .frisbee-img-grid{grid-template-columns:1fr 1fr}
   .app-features{grid-template-columns:1fr}
@@ -186,8 +188,8 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 <nav>
   <a class="nav-brand" href="#">DBSP</a>
   <div class="nav-links">
+    <a href="#individual">Programs</a>
     <a href="#teams">Teams</a>
-    <a href="#individual">Individual</a>
     <a href="#ultimate">Ultimate</a>
     <a href="#frisbee-track">Frisbee Track</a>
     <a href="#ebook">Free ebook</a>
@@ -200,9 +202,9 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
     <div class="hero-content">
       <div class="hero-eyebrow">Elite Sport Performance &middot; Sydney, Australia</div>
       <h1>Dylan<br><em>Bennett</em></h1>
-      <p class="hero-sub">National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby Teams &mdash; delivering elite performance methodology to teams, clubs, and individual athletes across Australia.</p>
+      <p class="hero-sub">National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby Teams, delivering elite performance methodology to teams, clubs, and individual athletes across Australia.</p>
       <div class="hero-actions">
-        <a href="#teams" class="btn-primary">View packages</a>
+        <a href="#individual" class="btn-primary">View programs</a>
         <a href="#about" class="btn-ghost">About Dylan</a>
       </div>
       <div class="hero-stats">
@@ -235,14 +237,14 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         </div>
       </div>
       <div class="about-body">
-        <p>I work at the intersection of elite sport and evidence-based practice. As S&amp;C coach embedded in the Australian Sevens Rugby Men's and Women's Teams, I design and deliver performance training for some of the country's best athletes &mdash; both men's and women's.</p>
+        <p>I work at the intersection of elite sport and evidence-based practice. As S&amp;C coach embedded in the Australian Sevens Rugby Men's and Women's Teams, I design and deliver performance training for some of the country's best athletes, across both men's and women's programs.</p>
         <p>That experience shapes everything I build for you and your teams. You get the methodology of an elite program, applied practically to your sport, your schedule, and your athletes' realities.</p>
         <p>Every program is built around your team's specific sport demands, competition calendar, and available resources.</p>
         <div class="cred-list">
-          <div class="cred">S&amp;C Coach &mdash; Australian Men's &amp; Women's Sevens Rugby</div>
+          <div class="cred">National S&amp;C &amp; Rehabilitation Coach, Australian Men's &amp; Women's Sevens Rugby</div>
           <div class="cred">Rehabilitation Planning and Programming</div>
           <div class="cred">Experience across national &amp; state programs</div>
-          <div class="cred">Worked with multiple sports at an elite level &mdash; field, court and individual sports</div>
+          <div class="cred">Worked with multiple sports at an elite level, field, court and individual sports</div>
         </div>
       </div>
     </div>
@@ -251,7 +253,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         <img src="jw_team.jpeg" alt="jw_team" style="object-position:center top">
       </div>
     </div>
-    <p class="proof-caption">DBSP &mdash; Dylan Bennett Sport Performance</p>
+    <p class="proof-caption">DBSP · Dylan Bennett Sport Performance</p>
   </div>
 </section>
 
@@ -264,44 +266,28 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
     <h2 class="section-heading">Performance coaching<br>for your whole team</h2>
     <div class="services-with-photo">
       <div class="services-grid">
-        <div class="svc"><div class="svc-num">01</div><div class="svc-title">Sport-specific program design</div><div class="svc-desc">Programs built around the actual movement demands of your sport &mdash; acceleration, speed, power, and repeat sprint capacity tailored to how your athletes compete.</div></div>
+        <div class="svc"><div class="svc-num">01</div><div class="svc-title">Sport-specific program design</div><div class="svc-desc">Programs built around the actual movement demands of your sport: acceleration, speed, power, and repeat sprint capacity tailored to how your athletes compete.</div></div>
         <div class="svc"><div class="svc-num">02</div><div class="svc-title">In-season &amp; off-season phases</div><div class="svc-desc">Periodised across your full season. Training blocks structured around your competition calendar so athletes peak when it matters.</div></div>
         <div class="svc"><div class="svc-num">03</div><div class="svc-title">Ongoing program updates</div><div class="svc-desc">Programs evolve as the season progresses, athletes adapt, and competition demands shift. You're not locked into a static document.</div></div>
         <div class="svc"><div class="svc-num">04</div><div class="svc-title">Regular coach check-ins</div><div class="svc-desc">Monthly or fortnightly calls to review how athletes are tracking, answer questions, and adjust the program based on what's happening on the ground.</div></div>
-        <div class="svc"><div class="svc-num">05</div><div class="svc-title">Field &amp; gym sessions</div><div class="svc-desc">Sport-specific conditioning that bridges the gym and the field &mdash; built around the energy systems and movement patterns your sport demands.</div></div>
+        <div class="svc"><div class="svc-num">05</div><div class="svc-title">Field &amp; gym sessions</div><div class="svc-desc">Sport-specific conditioning that bridges the gym and the field, built around the energy systems and movement patterns your sport demands.</div></div>
         <div class="svc"><div class="svc-num">06</div><div class="svc-title">In-person camps &amp; sessions</div><div class="svc-desc">Hands-on coaching for teams wanting direct involvement. Pre-season testing, intensive blocks, and skills camps available on request.</div></div>
       </div>
       <div class="photo-slot" data-slot="teams-portrait" style="aspect-ratio:3/4;align-self:stretch;border-radius:10px">
         <img src="jw_team.jpeg" alt="jw_team" style="object-position:center top">
       </div>
     </div>
-    <div class="pkg-grid" style="margin-top:56px">
-      <div class="pkg">
-        <div class="pkg-tier">Base</div>
-        <div class="pkg-name">Foundation</div>
-        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete &middot; per season</div></div>
-        <ul class="pkg-list">
-          <li>Sport-specific templated program delivered via Teambuildr</li>
-          <li>Monthly check-in call with your team lead</li>
-          <li>Ongoing program updates across the season</li>
-          <li>Direct messaging access for questions</li>
-        </ul>
-        <a href="#contact" class="btn-pkg g">Get in touch</a>
-      </div>
-      <div class="pkg featured">
-        <div class="pkg-badge">Most popular</div>
-        <div class="pkg-tier">Pro</div>
-        <div class="pkg-name">Custom</div>
-        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete &middot; per season</div></div>
-        <ul class="pkg-list">
-          <li>Fully custom program designed around your team's schedule &amp; facilities</li>
-          <li>Fortnightly check-in calls throughout the season</li>
-          <li>Two in-person sessions or camps per season (Sydney-based)</li>
-          <li>Ongoing updates and real-time adjustments</li>
-          <li>Priority direct access throughout the season</li>
-        </ul>
-        <a href="#contact" class="btn-pkg p">Get in touch</a>
-      </div>
+    <div style="margin-top:56px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:36px;max-width:640px">
+      <div class="pkg-tier">Teams &amp; Clubs</div>
+      <div class="pkg-name" style="font-size:28px;margin-bottom:16px">Pricing discussed directly</div>
+      <p style="font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:24px">Every team engagement is different. Pricing depends on squad size, program scope, season length, and level of involvement. Get in touch and we'll work out what makes sense for your team.</p>
+      <ul class="pkg-list" style="margin-bottom:28px">
+        <li>Templated or fully custom programs available depending on your needs</li>
+        <li>Monthly or fortnightly check-in cadence</li>
+        <li>In-person camps and sessions available for Sydney-based teams</li>
+        <li>Scales from small club squads to national programs</li>
+      </ul>
+      <a href="#contact" class="btn-pkg p" style="display:inline-block;width:auto;padding:12px 28px">Get in touch</a>
     </div>
   </div>
 </section>
@@ -310,41 +296,88 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
   <div class="container">
     <div class="section-tag">
       <div class="section-tag-line"></div>
-      <div class="section-tag-text">02 &nbsp;&middot;&nbsp; Individual Athletes</div>
+      <div class="section-tag-text">02 &nbsp;&middot;&nbsp; Individual Programs</div>
     </div>
-    <div class="ind-hero-grid" style="margin-bottom:56px">
-      <div>
-        <h2 class="section-heading" style="margin-bottom:20px">Your own<br>performance coach</h2>
-        <p style="font-size:16px;color:var(--ink2);line-height:1.72;margin-bottom:28px">Personal S&amp;C programming built specifically for you &mdash; your sport, your schedule, your goals. Not a generic plan. A relationship with a coach who knows elite performance from the inside.</p>
-        <a href="#contact" class="btn-primary">Start the conversation</a>
+    <h2 class="section-heading" style="margin-bottom:16px">Train like a<br><em style="color:var(--accent-m);font-style:normal">national athlete</em></h2>
+    <p style="font-size:16px;color:var(--ink2);line-height:1.72;max-width:580px;margin-bottom:56px">Three ways to work together. From a fully independent self-serve program through to individually built custom coaching and rehab. Same methodology, different levels of involvement.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px">
+
+      <!-- SELF-SERVE -->
+      <div class="pkg" style="display:flex;flex-direction:column">
+        <div style="flex:1">
+          <div style="margin-bottom:14px">
+            <span style="font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--cyan-l);color:var(--cyan-dark);border:1px solid rgba(0,212,255,0.25);padding:3px 9px;border-radius:3px">Self-serve</span>
+          </div>
+          <div class="pkg-name" style="font-size:22px;line-height:1.1;margin-bottom:6px">Ultimate Frisbee<br>Speed &amp; Power</div>
+          <div class="pkg-price" style="margin-bottom:16px;padding-bottom:16px">
+            <div class="pkg-amount" style="font-size:36px;color:var(--cyan-dark)">$180</div>
+            <div class="pkg-unit">per month &middot; 5 month program</div>
+          </div>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">An 18-week frisbee-specific S&amp;C program. Three gym sessions and four field sessions per week, built around your club training schedule. Buy once, run independently.</p>
+          <ul class="pkg-list" style="margin-bottom:24px">
+            <li>Full Body Strength, Power &amp; Lower Body Strength gym sessions</li>
+            <li>Speed &amp; acceleration field conditioning sessions</li>
+            <li>GPS-informed methodology from elite match data</li>
+            <li>Delivered via Teambuildr with full coaching notes</li>
+            <li>Onboarding guide included</li>
+          </ul>
+        </div>
+        <a href="https://market.teambuildr.com/programs/dbsp/dbsp-ultimate-frisbee-speed-power/checkout" target="_blank" class="btn-pkg g" style="border-color:var(--cyan-dark);color:var(--cyan-dark)">Buy the program</a>
       </div>
-      <div class="for-who">
-        <div class="for-who-label">This is for you if&hellip;</div>
-        <ul class="for-who-list">
-          <li>You're a serious club or national-level athlete wanting structured training</li>
-          <li>Your team has a programme but you want individual attention on top</li>
-          <li>You're preparing for trials, a selection window, or a key tournament</li>
-          <li>You've been injured and need a smart return-to-performance plan</li>
-          <li>You want to train consistently year-round, not just in-season</li>
-        </ul>
+
+      <!-- CUSTOM COACHING -->
+      <div class="pkg featured" style="display:flex;flex-direction:column">
+        <div class="pkg-badge">Most popular</div>
+        <div style="flex:1">
+          <div style="margin-bottom:14px">
+            <span style="font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--accent-l);color:var(--accent-m);border:1px solid rgba(45,98,160,.22);padding:3px 9px;border-radius:3px">Custom</span>
+          </div>
+          <div class="pkg-name" style="font-size:22px;line-height:1.1;margin-bottom:6px">Individual<br>Coaching</div>
+          <div class="pkg-price" style="margin-bottom:16px;padding-bottom:16px">
+            <div class="pkg-amount" style="font-size:36px">$300</div>
+            <div class="pkg-unit">per month</div>
+          </div>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">A program built specifically around you. Your sport, your schedule, your goals. Dylan involved throughout. Sydney in-person or remote.</p>
+          <ul class="pkg-list" style="margin-bottom:24px">
+            <li>Fully custom program written for your sport, schedule &amp; goals</li>
+            <li>Weekly check-ins and real-time program adjustments</li>
+            <li>Tournament planning and taper weeks built in</li>
+            <li>Teambuildr access with full coaching notes</li>
+            <li>WhatsApp access for questions throughout the month</li>
+          </ul>
+        </div>
+        <a href="https://dylanbennett900.github.io/dbsp/guide.html#apply" class="btn-pkg p">Apply for coaching</a>
       </div>
+
+      <!-- REHAB -->
+      <div class="pkg" style="display:flex;flex-direction:column">
+        <div style="flex:1">
+          <div style="margin-bottom:14px">
+            <span style="font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,180,0,0.1);color:#a07000;border:1px solid rgba(255,180,0,0.3);padding:3px 9px;border-radius:3px">Application only</span>
+          </div>
+          <div class="pkg-name" style="font-size:22px;line-height:1.1;margin-bottom:6px">Injury Rehab<br>&amp; Return</div>
+          <div class="pkg-price" style="margin-bottom:16px;padding-bottom:16px">
+            <div class="pkg-amount" style="font-size:36px">$300</div>
+            <div class="pkg-unit">per month</div>
+          </div>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">Individual rehab and return-to-performance programming for any athlete with an injury. Application-based given the nature of injury management.</p>
+          <ul class="pkg-list" style="margin-bottom:24px">
+            <li>Custom rehab program built around your injury and timeline</li>
+            <li>Return-to-performance pathway with clear progressions</li>
+            <li>Modification support to keep training where possible</li>
+            <li>Regular check-ins and adjustments as you progress</li>
+            <li>Open to any sport, Sydney or remote</li>
+          </ul>
+        </div>
+        <a href="#contact" class="btn-pkg g">Apply for rehab</a>
+      </div>
+
     </div>
-    <div class="pkg" style="max-width:560px">
-      <div class="pkg-tier">Custom coaching</div>
-      <div class="pkg-name">Individual Program</div>
-      <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);font-size:14px;color:var(--ink3);line-height:1.6">Pricing is discussed directly — every athlete's situation is different and I'd rather understand your goals before talking numbers.</div>
-      <ul class="pkg-list">
-        <li>Fully custom program written for you — your sport, schedule, and goals</li>
-        <li>Fortnightly check-in calls to review progress and adjust</li>
-        <li>Ongoing program updates throughout the block</li>
-        <li>Teambuildr access with full coaching notes</li>
-        <li>Direct messaging access throughout the month</li>
-      </ul>
-      <a href="#contact" class="btn-pkg p">Apply for coaching</a>
-    </div>
+
     <div class="trial-box">
-      <div class="trial-icon">&#9733;</div>
-      <div class="trial-text"><strong>Currently accepting a small number of new individual athletes.</strong> I'm intentionally keeping individual numbers small so the quality of coaching stays high. If you've been thinking about reaching out &mdash; now is a good time.</div>
+      <div class="trial-icon" style="background:var(--cyan-dark)">&#9733;</div>
+      <div class="trial-text"><strong>Custom coaching and rehab spots are limited.</strong> Dylan works with a small number of individual athletes at a time so the quality of coaching stays high. If you've been thinking about it, now is a good time to reach out.</div>
     </div>
   </div>
 </section>
@@ -353,14 +386,14 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
   <div class="container">
     <div class="section-tag">
       <div class="section-tag-line"></div>
-      <div class="section-tag-text">03 &nbsp;&middot;&nbsp; Ultimate Frisbee specialist</div>
+      <div class="section-tag-text">03 &nbsp;&middot;&nbsp; Ultimate Frisbee</div>
     </div>
     <div class="frisbee-intro">
       <div>
         <div class="frisbee-tag">Inside the sport</div>
         <h2 class="frisbee-heading">Coaching built<br>for <em>ultimate</em></h2>
         <div class="frisbee-body">
-          <p>The only S&amp;C coach in the world working in professional sport at an elite level who also plays the sport of Ultimate Frisbee. The programs I write for your team are informed by an understanding of the demands of the game based on GPS data from international and national matches &mdash; not adapted from another sport.</p>
+          <p>The only S&amp;C coach in the world working in professional sport at an elite level who also plays the sport of Ultimate Frisbee. The programs I write for your team are informed by an understanding of the demands of the game based on GPS data from international and national matches, not adapted from another sport.</p>
           <p>Explosive cutting, repeat acceleration, position specific conditioning, and tournament periodisation. I know what it takes to build athletic ultimate teams because I play at that level myself.</p>
         </div>
       </div>
@@ -374,8 +407,8 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
       </div>
     </div>
     <div class="how-grid" style="margin-top:64px">
-      <div><div class="how-num">01</div><div class="how-title">Ultimate-specific mechanics</div><div class="how-desc">Acceleration from pivot positions, curved sprint patterns, position-specific loading for handlers and cutters &mdash; built around how the game is actually played.</div></div>
-      <div><div class="how-num">02</div><div class="how-title">Frisbee-integrated field work</div><div class="how-desc">Speed and conditioning work that meets the demands of the game &mdash; so athletes develop athleticism in the context they'll actually use it, not in isolation from the game.</div></div>
+      <div><div class="how-num">01</div><div class="how-title">Ultimate-specific mechanics</div><div class="how-desc">Acceleration from pivot positions, curved sprint patterns, position-specific loading for handlers and cutters, built around how the game is actually played.</div></div>
+      <div><div class="how-num">02</div><div class="how-title">Frisbee-integrated field work</div><div class="how-desc">Speed and conditioning work that meets the demands of the game, so athletes develop athleticism in the context they'll actually use it, not in isolation from the game.</div></div>
       <div><div class="how-num">03</div><div class="how-title">Tournament periodisation</div><div class="how-desc">Programs structured around your season (AUC, WUCC, WUC, AOUC) so your squad peaks at the right time in the season, not just in training blocks.</div></div>
     </div>
     <div style="margin-top:48px">
@@ -394,35 +427,19 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         </div>
       </div>
     </div>
-    <div class="pkg-grid" style="margin-top:56px">
-      <div class="pkg">
-        <div class="pkg-tier">Base</div>
-        <div class="pkg-name">Foundation</div>
-        <div class="pkg-price"><div class="pkg-amount">$300</div><div class="pkg-unit">per athlete &middot; per campaign</div></div>
-        <ul class="pkg-list">
-          <li>Ultimate-specific templated program via Teambuildr</li>
-          <li>Monthly check-in with your team lead</li>
-          <li>Ongoing program updates across the season</li>
-          <li>Direct messaging access</li>
-        </ul>
-        <a href="#contact" class="btn-pkg g">Get in touch</a>
-      </div>
-      <div class="pkg featured">
-        <div class="pkg-badge">Most popular</div>
-        <div class="pkg-tier">Pro</div>
-        <div class="pkg-name">Custom</div>
-        <div class="pkg-price"><div class="pkg-amount">$600</div><div class="pkg-unit">per athlete &middot; per campaign</div></div>
-        <ul class="pkg-list">
-          <li>Fully custom program built around your tournament calendar</li>
-          <li>Frisbee-integrated field sessions with full drill diagrams</li>
-          <li>Fortnightly check-in calls throughout the season</li>
-          <li>One in-person session or camp per season</li>
-          <li>Priority access and real-time program adjustments</li>
-        </ul>
-        <a href="#contact" class="btn-pkg p">Get in touch</a>
-      </div>
+    <div style="margin-top:56px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:36px;max-width:640px">
+      <div class="pkg-tier">Ultimate Frisbee Teams</div>
+      <div class="pkg-name" style="font-size:28px;margin-bottom:16px">Pricing discussed directly</div>
+      <p style="font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:24px">Team pricing depends on squad size, program scope, and level of involvement. Get in touch and we'll work out what fits.</p>
+      <ul class="pkg-list" style="margin-bottom:28px">
+        <li>Frisbee-specific field and gym program via Teambuildr</li>
+        <li>Tournament periodisation built around your season calendar</li>
+        <li>Frisbee Track integration for individual load monitoring</li>
+        <li>In-person camps available for Sydney-based teams</li>
+      </ul>
+      <a href="#contact" class="btn-pkg p" style="display:inline-block;width:auto;padding:12px 28px">Get in touch</a>
     </div>
-    <p style="margin-top:16px;font-size:13px;color:var(--ink3);text-align:center">DBSP &mdash; Dylan Bennett Sport Performance</p>
+    <p style="margin-top:16px;font-size:13px;color:var(--ink3)">DBSP · Dylan Bennett Sport Performance</p>
   </div>
 </section>
 
@@ -438,15 +455,15 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
         <div class="frisbee-tag">Free tool</div>
         <h2 class="frisbee-heading" style="margin-bottom:20px">Train to the<br><em>actual numbers</em></h2>
         <div class="frisbee-body">
-          <p>Frisbee Track is a training load monitoring app built specifically for Ultimate Frisbee &mdash; using GPS data collected from elite international competition. Not estimates. Not data borrowed from another sport. The real numbers from real games.</p>
-          <p>It translates match demands into personalised weekly targets for distance, high-speed running, accelerations, and gym load &mdash; then tracks where you are across the week and tells you what to do next. No GPS hardware required.</p>
+          <p>Frisbee Track is a training load monitoring app built specifically for Ultimate Frisbee, using GPS data collected from elite international competition. Not estimates. Not data borrowed from another sport. The real numbers from real games.</p>
+          <p>It translates match demands into personalised weekly targets for distance, high-speed running, accelerations, and gym load, then tracks where you are across the week and tells you what to do next. No GPS hardware required.</p>
         </div>
         <div class="app-stat-row" style="margin-top:32px">
           <div class="app-stat"><div class="app-stat-num">3,479m</div><div class="app-stat-label">median game distance at WUC</div></div>
           <div class="app-stat"><div class="app-stat-num">759m</div><div class="app-stat-label">high-speed running per game</div></div>
           <div class="app-stat"><div class="app-stat-num">50</div><div class="app-stat-label">accelerations per game</div></div>
         </div>
-        <p style="font-size:13px;color:var(--ink3);margin-bottom:28px">Targets are derived from this data &mdash; scaled to your level and position.</p>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:28px">Targets are derived from this data, scaled to your level and position.</p>
         <a href="https://dylanbennett900.github.io/disc-load/" target="_blank" class="btn-primary" style="margin-right:10px">Try Frisbee Track free</a>
       </div>
       <div>
@@ -494,7 +511,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
             </div>
             <div style="margin-top:auto;background:var(--accent-l);border:1px solid rgba(45,98,160,.18);border-radius:7px;padding:12px 14px">
               <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-m);margin-bottom:4px">AI prescription</div>
-              <div style="font-size:13px;color:var(--accent);line-height:1.5">2 field sessions remaining this week. HSR at 88% &mdash; prioritise a tempo run before adding intensity.</div>
+              <div style="font-size:13px;color:var(--accent);line-height:1.5">2 field sessions remaining this week. HSR at 88%. Prioritise a tempo run before adding intensity.</div>
             </div>
           </div>
         </div>
@@ -504,7 +521,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
       <div class="app-feat">
         <div class="app-feat-num">01</div>
         <div class="app-feat-title">GPS-backed targets</div>
-        <div class="app-feat-desc">Weekly distance, HSR, VHSR, and acceleration targets derived from actual match data &mdash; scaled by level and position.</div>
+        <div class="app-feat-desc">Weekly distance, HSR, VHSR, and acceleration targets derived from actual match data, scaled by level and position.</div>
       </div>
       <div class="app-feat">
         <div class="app-feat-num">02</div>
@@ -519,7 +536,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
       <div class="app-feat">
         <div class="app-feat-num">04</div>
         <div class="app-feat-title">Tournament periodisation</div>
-        <div class="app-feat-desc">Set your tournament date and the app builds a periodised block &mdash; moderate, high, and taper weeks &mdash; leading into competition.</div>
+        <div class="app-feat-desc">Set your tournament date and the app builds a periodised block across moderate, high, and taper weeks leading into competition.</div>
       </div>
     </div>
   </div>
@@ -534,14 +551,14 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
     </div>
     <div class="ebook-grid">
       <div class="ebook-cover">
-        <div class="ebook-cover-label">DBSP &mdash; Free ebook</div>
+        <div class="ebook-cover-label">DBSP · Free ebook</div>
         <div class="ebook-cover-title">The High Performance<br>Puzzle</div>
         <div class="ebook-cover-sub">Strength &amp; Conditioning for Ultimate Frisbee</div>
         <div class="ebook-chapters">
           <div class="ebook-ch"><span class="ebook-ch-num">01</span>Why S&amp;C belongs in your frisbee program</div>
           <div class="ebook-ch"><span class="ebook-ch-num">02</span>The five physical qualities of frisbee</div>
           <div class="ebook-ch"><span class="ebook-ch-num">03</span>How training adaptation actually works</div>
-          <div class="ebook-ch"><span class="ebook-ch-num">04</span>Training, nutrition, recovery &mdash; the four levers</div>
+          <div class="ebook-ch"><span class="ebook-ch-num">04</span>Training, nutrition, recovery, the four levers</div>
           <div class="ebook-ch"><span class="ebook-ch-num">05</span>On-field training and gym work together</div>
           <div class="ebook-ch"><span class="ebook-ch-num">06&ndash;08</span>Recovery, nutrition, and the mental edge</div>
           <div class="ebook-ch"><span class="ebook-ch-num">09&ndash;12</span>Weekly templates, game day, supplements</div>
@@ -550,7 +567,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
       </div>
       <div class="ebook-form-wrap">
         <div class="ebook-pitch">
-          <p>A complete guide to physical preparation for Ultimate Frisbee &mdash; written from inside elite sport and grounded in GPS match data from international competition.</p>
+          <p>A complete guide to physical preparation for Ultimate Frisbee, written from inside elite sport and grounded in GPS match data from international competition.</p>
           <p>Covers the science of adaptation, how to structure your training week, recovery protocols, game day nutrition, and the supplements that actually work. Free. No strings.</p>
         </div>
         <div class="ebook-capture">
@@ -558,7 +575,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
           <input type="email" id="ebook-email" class="ebook-input" placeholder="Your email address" required>
           <button class="ebook-submit" id="ebook-btn" onclick="submitEbook()">Send me the ebook &rarr;</button>
           <div class="ebook-success" id="ebook-success">
-            <strong>Check your inbox.</strong> The ebook is on its way &mdash; usually within a minute. Check your spam folder if it doesn't arrive.
+            <strong>Check your inbox.</strong> The ebook is on its way, usually within a minute. Check your spam folder if it doesn't arrive.
           </div>
           <p class="ebook-fine-print">No spam. Unsubscribe any time.</p>
         </div>
@@ -570,11 +587,11 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 <section id="contact" class="cta-section">
   <div class="container">
     <h2>Ready to<br><em>work together?</em></h2>
-    <p>Tell me about your team or your goals &mdash; sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
+    <p>Tell me about your team or your goals, sport level, current setup, and what you're trying to achieve. I'll come back to you within 48 hours.</p>
     <form action="https://formspree.io/f/mqegzyzw" method="POST" style="max-width:480px;margin:36px auto 0;display:flex;flex-direction:column;gap:12px;text-align:left">
       <input type="text" name="name" placeholder="Your name" required style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'">
       <input type="email" name="email" placeholder="Your email" required style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'">
-      <textarea name="message" placeholder="Tell me about your team or goals &mdash; sport level, current setup, what you're trying to achieve..." required rows="5" style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;resize:vertical;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'"></textarea>
+      <textarea name="message" placeholder="Tell me about your team or goals, sport level, current setup, what you're trying to achieve..." required rows="5" style="font-family:var(--fb);font-size:14px;padding:12px 16px;border:1px solid var(--border-s);border-radius:5px;background:var(--panel);color:var(--ink);outline:none;resize:vertical;transition:border-color .15s" onfocus="this.style.borderColor='var(--accent-m)'" onblur="this.style.borderColor='var(--border-s)'"></textarea>
       <button type="submit" class="btn-primary" style="padding:13px 28px;font-size:14px;border:none;cursor:pointer">Send message</button>
     </form>
     <p style="margin-top:28px;font-size:13px;color:var(--ink3)">
@@ -589,7 +606,7 @@ footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-i
 
 <footer>
   <div class="footer-brand">DBSP</div>
-  <div>Dylan Bennett Sport Performance &middot; Sydney, Australia</div>
+  <div>Dylan Bennett Sport Performance · Sydney, Australia &nbsp;·&nbsp; <a href="privacy.html" style="color:var(--ink3);text-decoration:none">Privacy</a></div>
 </footer>
 
 <script>
