@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DBSP Program Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a3a5c;
+  --navy-deep:#0f2235;
+  --navy-mid:#2d62a0;
+  --off-white:#f4f2ee;
+  --off-white2:#eceae5;
+  --cyan:#00d4ff;
+  --green:#00e87a;
+  --amber:#ffb400;
+  --red:#ff4444;
+  --ink:#1a1a18;
+  --ink2:#4a4a46;
+  --ink3:#8a8a84;
+  --white:#ffffff;
+  --fd:"Barlow Condensed",sans-serif;
+  --fb:"DM Sans",sans-serif;
+  --fm:"JetBrains Mono",monospace;
+  --max:780px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--ink);background:var(--off-white);-webkit-font-smoothing:antialiased;line-height:1.6}
+
+/* ── NAV ── */
+.top-bar{
+  background:var(--navy);
+  padding:14px 5vw;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.top-brand{
+  font-family:var(--fd);
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:0.14em;
+  color:var(--white);
+}
+.top-tag{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--cyan);
+}
+.top-nav{
+  display:flex;
+  gap:20px;
+}
+.top-nav a{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+  text-decoration:none;
+  transition:color 0.15s;
+}
+.top-nav a:hover{color:var(--white)}
+@media(max-width:600px){.top-nav{display:none}}
+
+/* ── HERO ── */
+.hero{
+  background:var(--navy);
+  padding:60px 5vw 56px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.hero-inner{max-width:var(--max);margin:0 auto;}
+.hero-eyebrow{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  margin-bottom:16px;
+}
+.hero-h{
+  font-family:var(--fd);
+  font-size:clamp(40px,8vw,72px);
+  font-weight:900;
+  line-height:0.9;
+  text-transform:uppercase;
+  color:var(--white);
+  margin-bottom:20px;
+}
+.hero-h em{font-style:italic;color:var(--cyan)}
+.hero-sub{
+  font-size:16px;
+  color:rgba(255,255,255,0.6);
+  max-width:520px;
+  line-height:1.65;
+  margin-bottom:36px;
+}
+.hero-stats{
+  display:flex;
+  gap:32px;
+  flex-wrap:wrap;
+}
+.hero-stat{}
+.hero-stat-num{
+  font-family:var(--fd);
+  font-size:28px;
+  font-weight:900;
+  color:var(--cyan);
+  line-height:1;
+}
+.hero-stat-label{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.4);
+  margin-top:2px;
+}
+
+/* ── SECTION SHELL ── */
+.section{padding:56px 5vw}
+.section-inner{max-width:var(--max);margin:0 auto;}
+.section.alt{background:var(--off-white2)}
+.section.dark{background:var(--navy)}
+.section-eyebrow{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:10px;
+}
+.section.dark .section-eyebrow{color:rgba(255,255,255,0.35)}
+.section-h{
+  font-family:var(--fd);
+  font-size:clamp(28px,5vw,40px);
+  font-weight:900;
+  text-transform:uppercase;
+  line-height:0.92;
+  color:var(--navy);
+  margin-bottom:28px;
+}
+.section.dark .section-h{color:var(--white)}
+.section-body{
+  font-size:15px;
+  color:var(--ink2);
+  line-height:1.7;
+  margin-bottom:20px;
+}
+.section.dark .section-body{color:rgba(255,255,255,0.6)}
+
+/* ── WEEK GRID ── */
+.week-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+  margin:28px 0;
+}
+.day-card{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:6px;
+  padding:12px 8px;
+  text-align:center;
+}
+.day-name{
+  font-family:var(--fm);
+  font-size:9px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:8px;
+}
+.day-session{
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.3;
+  margin-bottom:4px;
+}
+.day-session.speed{color:#6366f1}
+.day-session.accel{color:#a855f7}
+.day-session.team{color:var(--navy)}
+.day-session.gym-str{color:#0ea5e9}
+.day-session.gym-pow{color:#10b981}
+.day-session.gym-lb{color:#f59e0b}
+.day-session.rest{color:var(--ink3);font-weight:400;font-style:italic}
+.day-tag{
+  font-family:var(--fm);
+  font-size:8px;
+  letter-spacing:0.08em;
+  color:var(--ink3);
+  text-transform:uppercase;
+}
+.ampm-row{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.ampm-block{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.ampm-label{
+  font-family:var(--fm);
+  font-size:8px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  background:var(--navy);
+  display:inline-block;
+  padding:1px 5px;
+  border-radius:2px;
+  margin-bottom:2px;
+  width:fit-content;
+}
+.ampm-divider{
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin:2px 0;
+}
+@media(max-width:600px){
+  .week-grid{grid-template-columns:repeat(4,1fr)}
+}
+
+/* ── SESSION KEY ── */
+.session-key{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:24px;
+}
+.key-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:var(--ink2);
+}
+.key-dot{
+  width:10px;height:10px;
+  border-radius:2px;
+  flex-shrink:0;
+}
+
+/* ── RULE CARDS ── */
+.rule-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:8px;
+}
+.rule-card{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.07);
+  border-left:3px solid var(--cyan);
+  border-radius:6px;
+  padding:16px 18px;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+.section.dark .rule-card{
+  background:rgba(255,255,255,0.06);
+  border-color:rgba(255,255,255,0.08);
+  border-left-color:var(--cyan);
+}
+.rule-icon{
+  font-family:var(--fm);
+  font-size:13px;
+  color:var(--cyan);
+  flex-shrink:0;
+  line-height:1.6;
+}
+.rule-text{
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.55;
+}
+.section.dark .rule-text{color:rgba(255,255,255,0.65)}
+.rule-text strong{color:var(--ink);font-weight:600}
+.section.dark .rule-text strong{color:var(--white)}
+
+/* ── ALERT CARDS ── */
+.alert{
+  border-radius:6px;
+  padding:16px 18px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin:20px 0;
+}
+.alert.amber{background:rgba(255,180,0,0.1);border:1px solid rgba(255,180,0,0.25)}
+.alert.red{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2)}
+.alert.green{background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.2)}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-text{font-size:14px;color:var(--ink2);line-height:1.55}
+.alert-text strong{color:var(--ink)}
+
+/* ── COMPLEX BLOCK ── */
+.complex-block{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:20px 20px;
+  margin:12px 0;
+}
+.complex-label{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:10px;
+}
+.complex-exercises{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.ex-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  color:var(--ink2);
+}
+.ex-badge{
+  background:var(--navy);
+  color:var(--cyan);
+  font-family:var(--fm);
+  font-size:9px;
+  font-weight:700;
+  padding:2px 6px;
+  border-radius:3px;
+  flex-shrink:0;
+}
+.superset-label{
+  font-family:var(--fm);
+  font-size:10px;
+  color:var(--ink3);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid rgba(0,0,0,0.06);
+}
+
+/* ── RECOVERY GRID ── */
+.recovery-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+@media(max-width:600px){.recovery-grid{grid-template-columns:1fr}}
+.recovery-card{
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:8px;
+  padding:20px 18px;
+}
+.recovery-card-label{
+  font-family:var(--fm);
+  font-size:9px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:12px;
+}
+.recovery-option{
+  margin-bottom:14px;
+}
+.recovery-option-num{
+  font-family:var(--fm);
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  margin-bottom:4px;
+}
+.recovery-option-text{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.45;
+}
+
+/* ── TOURNAMENT BLOCK ── */
+.tournament-block{
+  background:rgba(0,212,255,0.07);
+  border:1px solid rgba(0,212,255,0.2);
+  border-radius:8px;
+  padding:24px 22px;
+  margin-top:20px;
+}
+.tournament-block h4{
+  font-family:var(--fd);
+  font-size:18px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:var(--navy);
+  margin-bottom:12px;
+  letter-spacing:0.04em;
+}
+.tournament-block ul{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.tournament-block ul li{
+  display:flex;
+  gap:10px;
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.45;
+}
+.tournament-block ul li::before{
+  content:"→";
+  color:var(--cyan);
+  font-weight:700;
+  flex-shrink:0;
+}
+
+/* ── INJURY BLOCK ── */
+.injury-rule{
+  background:rgba(255,68,68,0.06);
+  border:1px solid rgba(255,68,68,0.15);
+  border-radius:8px;
+  padding:20px 20px;
+  margin-top:16px;
+}
+.injury-rule h4{
+  font-family:var(--fd);
+  font-size:17px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:#c0392b;
+  margin-bottom:10px;
+  letter-spacing:0.04em;
+}
+.injury-rule p{
+  font-size:14px;
+  color:var(--ink2);
+  line-height:1.6;
+}
+.injury-rule strong{color:var(--ink)}
+
+/* ── CONTACT BLOCK ── */
+.contact-block{
+  background:var(--navy);
+  border-radius:8px;
+  padding:28px 24px;
+  margin-top:20px;
+  display:flex;
+  gap:24px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.contact-text h4{
+  font-family:var(--fd);
+  font-size:20px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:var(--white);
+  margin-bottom:6px;
+}
+.contact-text p{
+  font-size:13px;
+  color:rgba(255,255,255,0.55);
+  line-height:1.5;
+}
+.contact-btn{
+  display:inline-block;
+  padding:12px 22px;
+  background:var(--cyan);
+  color:var(--navy-deep);
+  font-family:var(--fd);
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  text-decoration:none;
+  border-radius:4px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* ── DIVIDER ── */
+.divider{
+  height:1px;
+  background:rgba(0,0,0,0.07);
+  margin:32px 0;
+}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--navy-deep);
+  padding:24px 5vw;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.footer-brand{font-family:var(--fd);font-size:16px;font-weight:900;letter-spacing:0.14em;color:var(--white)}
+.footer-note{font-family:var(--fm);font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.3);text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-bar">
+  <div>
+    <div class="top-brand">DBSP</div>
+    <div class="top-tag">Program Onboarding</div>
+  </div>
+  <div class="top-nav">
+    <a href="#structure">Structure</a>
+    <a href="#gym">Gym</a>
+    <a href="#field">Field</a>
+    <a href="#recovery">Recovery</a>
+    <a href="#injury">Injuries</a>
+    <a href="#tournament">Tournaments</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Welcome to DBSP</p>
+    <h1 class="hero-h">Your program.<br><em>How it works.</em></h1>
+    <p class="hero-sub">
+      Everything you need to execute this program with confidence. Read this once before you start your first week, then use it as a reference whenever you need it.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Gym sessions / week</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4</div>
+        <div class="hero-stat-label">Field sessions / week</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">RPE 7-8</div>
+        <div class="hero-stat-label">Target intensity</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAM STRUCTURE -->
+<section class="section" id="structure">
+  <div class="section-inner">
+    <p class="section-eyebrow">Overview</p>
+    <h2 class="section-h">Program structure</h2>
+    <p class="section-body">
+      The program is built around your club training week. It layers onto two team training sessions without competing with them. Gym and field conditioning sessions are designed to complement, not clash.
+    </p>
+
+    <div class="session-key">
+      <div class="key-item"><div class="key-dot" style="background:#6366f1"></div>Speed session</div>
+      <div class="key-item"><div class="key-dot" style="background:#a855f7"></div>Acceleration session</div>
+      <div class="key-item"><div class="key-dot" style="background:var(--navy)"></div>Team training</div>
+      <div class="key-item"><div class="key-dot" style="background:#0ea5e9"></div>Full Body Strength</div>
+      <div class="key-item"><div class="key-dot" style="background:#10b981"></div>Full Body Power</div>
+      <div class="key-item"><div class="key-dot" style="background:#f59e0b"></div>Lower Body Strength</div>
+    </div>
+
+    <p style="font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;">Example week</p>
+    <div class="week-grid">
+      <div class="day-card">
+        <div class="day-name">Mon</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM</div>
+            <div class="day-session speed">Speed</div>
+            <div class="day-tag">Field</div>
+          </div>
+          <div class="ampm-divider"></div>
+          <div class="ampm-block">
+            <div class="ampm-label">PM</div>
+            <div class="day-session rest">Rest</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Tue</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM</div>
+            <div class="day-session gym-str">FB Strength</div>
+            <div class="day-tag">Gym</div>
+          </div>
+          <div class="ampm-divider"></div>
+          <div class="ampm-block">
+            <div class="ampm-label">PM</div>
+            <div class="day-session team">Team</div>
+            <div class="day-tag">Club</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Wed</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM/PM</div>
+            <div class="day-session rest">Rest</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Thu</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM</div>
+            <div class="day-session gym-pow">FB Power</div>
+            <div class="day-tag">Gym</div>
+          </div>
+          <div class="ampm-divider"></div>
+          <div class="ampm-block">
+            <div class="ampm-label">PM</div>
+            <div class="day-session team">Team</div>
+            <div class="day-tag">Club</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Fri</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM</div>
+            <div class="day-session accel">Accel</div>
+            <div class="day-tag">Field</div>
+          </div>
+          <div class="ampm-divider"></div>
+          <div class="ampm-block">
+            <div class="ampm-label">PM</div>
+            <div class="day-session rest">Rest</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Sat</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM/PM</div>
+            <div class="day-session gym-lb">LB Strength</div>
+            <div class="day-tag">Gym · last in week</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-card">
+        <div class="day-name">Sun</div>
+        <div class="ampm-row">
+          <div class="ampm-block">
+            <div class="ampm-label">AM/PM</div>
+            <div class="day-session rest">Rest</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert amber">
+      <div class="alert-icon">⚠</div>
+      <div class="alert-text">This is an example only. Fit sessions around your own training days. The rules below tell you what matters and what's flexible.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULING RULES -->
+<section class="section alt">
+  <div class="section-inner">
+    <p class="section-eyebrow">Scheduling</p>
+    <h2 class="section-h">Session order &amp; placement</h2>
+    <div class="rule-list">
+      <div class="rule-card">
+        <div class="rule-icon">01</div>
+        <div class="rule-text"><strong>Speed before acceleration, always.</strong> Speed session must come earlier in the week than your acceleration session. The order of those two around team training doesn't matter much, but speed first is non-negotiable.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">02</div>
+        <div class="rule-text"><strong>No field conditioning on team training days.</strong> Speed and acceleration sessions should not fall on the same day as team training. Gym can be on the same day, gym in the AM, training in the PM works well, or run before gym if doing both field and gym.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">03</div>
+        <div class="rule-text"><strong>Lower Body Strength goes last in the week.</strong> Always complete this session after all your running for the week is done. This protects your speed and field work quality.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">04</div>
+        <div class="rule-text"><strong>If you miss a session, shuffle forward. Don't catch up.</strong> Skip it and move to your next scheduled session. Priority if you're tight: Lower Body Strength at the end of the week, Full Body Power mid-week.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEK 1 -->
+<section class="section" id="week1">
+  <div class="section-inner">
+    <p class="section-eyebrow">Getting started</p>
+    <h2 class="section-h">Your first week</h2>
+    <p class="section-body">The program ramps up through week one. Don't try to jump ahead.</p>
+    <div class="rule-list">
+      <div class="rule-card">
+        <div class="rule-icon">→</div>
+        <div class="rule-text"><strong>Complete all three gym sessions.</strong> If you're unsure about a starting weight on any exercise, go lighter than you think. You'll dial it in across the first few weeks.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">→</div>
+        <div class="rule-text"><strong>Complete the Speed session only for field conditioning.</strong> Leave the Acceleration session for week two. Your body needs to adapt to the speed stimulus before adding acceleration work on top.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GYM -->
+<section class="section alt" id="gym">
+  <div class="section-inner">
+    <p class="section-eyebrow">Gym sessions</p>
+    <h2 class="section-h">How to execute the gym program</h2>
+
+    <p class="section-body">Each gym session is built around complexes, groups of exercises, labelled A, B, C etc. Work through each complex completely before moving to the next.</p>
+
+    <div class="complex-block">
+      <div class="complex-label">Example session structure</div>
+      <div class="complex-exercises">
+        <div class="ex-row"><span class="ex-badge">A1</span>Back Squat, 4 x 5 @ 80%</div>
+        <div class="ex-row"><span class="ex-badge">A2</span>DB Split Squat, 3 x 8 RPE 7-8</div>
+        <div class="ex-row"><span class="ex-badge">A3</span>Nordic Hamstring Curl, 3 x 6</div>
+        <div class="superset-label">Complete A1, A2, A3 as a superset (or individually) before moving to B</div>
+        <div class="ex-row" style="margin-top:10px"><span class="ex-badge">B1</span>Hip Thrust, 4 x 8 @ 75%</div>
+        <div class="ex-row"><span class="ex-badge">B2</span>Copenhagen Plank, 3 x 30s</div>
+        <div class="superset-label">Complete B1, B2 before moving to C</div>
+      </div>
+    </div>
+
+    <div class="rule-list" style="margin-top:20px">
+      <div class="rule-card">
+        <div class="rule-icon">%</div>
+        <div class="rule-text"><strong>Percentages are % of your 1RM.</strong> Your 1RM is calculated automatically in Teambuildr as you log weights. Complete a 5-rep set, and your 1RM is estimated from those reps, it self-corrects over the first few weeks as you train.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">RPE</div>
+        <div class="rule-text"><strong>Where no percentage is given, target RPE 7-8.</strong> That's working hard but leaving 2-3 reps in the tank. Getting close to failure is expected and required for appropriate strength development, don't be afraid of that.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">⊞</div>
+        <div class="rule-text"><strong>Supersets are preferred but not mandatory.</strong> If your gym doesn't allow it, do exercises individually, just don't mix exercises from different complexes together. Finish the full A complex before starting B.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIELD -->
+<section class="section" id="field">
+  <div class="section-inner">
+    <p class="section-eyebrow">Field conditioning</p>
+    <h2 class="section-h">Speed &amp; acceleration sessions</h2>
+    <p class="section-body">Your two field conditioning sessions target different physical qualities and are sequenced deliberately. Both are delivered in Teambuildr as PDFs, these will move into the Frisbee Track app with embedded video as the program develops.</p>
+
+    <div class="rule-list">
+      <div class="rule-card">
+        <div class="rule-icon">S</div>
+        <div class="rule-text"><strong>Speed session (extensive), always first in the week.</strong> Higher volume, lower intensity. Builds your aerobic speed base and top-end running capacity. Do this on fresh legs earlier in the week.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">A</div>
+        <div class="rule-text"><strong>Acceleration session (intensive), always after speed.</strong> Lower volume, higher intensity. Targets short, sharp acceleration quality. Comes later in the week once the speed stimulus has been absorbed.</div>
+      </div>
+    </div>
+
+    <div class="alert green" style="margin-top:20px">
+      <div class="alert-icon">💡</div>
+      <div class="alert-text">Some weeks you'll see suggestions to add speed efforts or high-speed running top-ups at team training. These are optional add-ons, Dylan will advise on these individually as the program progresses.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOURNAMENT -->
+<section class="section alt" id="tournament">
+  <div class="section-inner">
+    <p class="section-eyebrow">Competition prep</p>
+    <h2 class="section-h">Tournament weeks</h2>
+    <p class="section-body">
+      A specific tournament prep week replaces your normal gym loading in the weeks leading into a tournament. Let Dylan know your tournament dates as early as possible so this can be planned ahead.
+    </p>
+    <div class="tournament-block">
+      <h4>Tournament prep week</h4>
+      <ul>
+        <li>Two gym sessions only, both with a power focus</li>
+        <li>Volume reduced, intensity kept high, maintains neural readiness</li>
+        <li>Manages residual fatigue from prior training weeks</li>
+        <li>No field conditioning sessions required</li>
+        <li>Speed efforts at team training may be suggested, Dylan will advise</li>
+      </ul>
+    </div>
+    <div class="alert amber" style="margin-top:16px">
+      <div class="alert-icon">⚠</div>
+      <div class="alert-text"><strong>Let Dylan know your tournament schedule as early as possible</strong>, ideally at the start of your season. This is planned proactively, not reactively.</div>
+    </div>
+  </div>
+</section>
+
+<!-- RECOVERY -->
+<section class="section dark" id="recovery">
+  <div class="section-inner">
+    <p class="section-eyebrow">Recovery</p>
+    <h2 class="section-h">Recovery menu</h2>
+    <p class="section-body">Recovery is part of the program, not optional. Use the menu below based on how you're feeling after training. You don't need to do all of them, pick the option that fits your situation.</p>
+
+    <div class="recovery-grid">
+      <div class="recovery-card">
+        <div class="recovery-card-label">Feeling fatigued?</div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 1</div>
+          <div class="recovery-option-text">5-10 min cold water immersion</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 2</div>
+          <div class="recovery-option-text">25 min flush run or bike at HR &lt;135 bpm</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 3</div>
+          <div class="recovery-option-text">Sleep</div>
+        </div>
+      </div>
+      <div class="recovery-card">
+        <div class="recovery-card-label">Feeling sore?</div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 1</div>
+          <div class="recovery-option-text">8-12 min cold water immersion</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 2</div>
+          <div class="recovery-option-text">Contrast: 2 min hot / 4 min cold, repeat x2</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 3</div>
+          <div class="recovery-option-text">20 min mobility/flexibility + foam roll</div>
+        </div>
+      </div>
+      <div class="recovery-card">
+        <div class="recovery-card-label">Feeling both?</div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 1</div>
+          <div class="recovery-option-text">Contrast: 2 min hot / 2 min cold, repeat x4</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 2</div>
+          <div class="recovery-option-text">Sleep with compression garments</div>
+        </div>
+        <div class="recovery-option">
+          <div class="recovery-option-num">Option 3</div>
+          <div class="recovery-option-text">10 min flush walk/bike at HR &lt;135 bpm + 10 min mobility/flex + foam roll</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INJURY -->
+<section class="section" id="injury">
+  <div class="section-inner">
+    <p class="section-eyebrow">Niggles &amp; injuries</p>
+    <h2 class="section-h">What to do if something hurts</h2>
+    <p class="section-body">
+      The goal is always to keep training, with modification if needed. Stopping entirely undoes progress. The priority is finding what you <em>can</em> do, not what you can't.
+    </p>
+
+    <div class="rule-list">
+      <div class="rule-card">
+        <div class="rule-icon">!</div>
+        <div class="rule-text"><strong>Contact Dylan for any modifications before skipping sessions.</strong> There is almost always a way to continue training around a niggle. Don't guess. Get in touch and it gets sorted.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-icon">→</div>
+        <div class="rule-text"><strong>Lower Body Strength must always be done last in the week, after all running.</strong> This applies whether you're fully healthy or training with modifications. The back squat and RDL session comes after your field work. No exceptions.</div>
+      </div>
+    </div>
+
+    <div class="injury-rule" style="margin-top:20px">
+      <h4>What counts as a niggle worth flagging?</h4>
+      <p>If something persists across two or more sessions, or affects your ability to complete a drill on field or an exercise in the gym at normal capacity. Flag it. Normal training soreness dissipates within two days. Soreness during the first few weeks of the program is also expected as your body adapts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section alt">
+  <div class="section-inner">
+    <p class="section-eyebrow">Questions</p>
+    <h2 class="section-h">Getting in touch</h2>
+    <p class="section-body">
+      For scheduling questions, injury modifications, tournament planning, or anything program-related. Reach out directly. You'll also be added to the DBSP WhatsApp group where general questions, tournament scheduling, and program updates are shared.
+    </p>
+    <div class="contact-block">
+      <div class="contact-text">
+        <h4>Contact Dylan directly</h4>
+        <p>Injuries, modifications, tournament dates, program questions.</p>
+      </div>
+      <a href="mailto:dbsportperformance@gmail.com" class="contact-btn">Get in touch</a>
+    </div>
+    <div class="alert green" style="margin-top:16px">
+      <div class="alert-icon">💬</div>
+      <div class="alert-text"><strong>WhatsApp group</strong>. You'll receive an invite link separately. Use this for general questions, tournament scheduling, and program discussion.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">DBSP</div>
+  <div class="footer-note">dbsportperformance.com</div>
+</footer>
+
+</body>
+</html>
