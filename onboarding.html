@@ -514,6 +514,150 @@ footer{
 }
 .footer-brand{font-family:var(--fd);font-size:16px;font-weight:900;letter-spacing:0.14em;color:var(--white)}
 .footer-note{font-family:var(--fm);font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.3);text-transform:uppercase}
+/* ── FRISBEE TRACK SECTION ── */
+.ft-hero{
+  background:var(--navy-deep);
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:10px;
+  padding:28px 26px;
+  margin-bottom:24px;
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
+}
+.ft-hero-icon{
+  font-size:28px;
+  flex-shrink:0;
+  margin-top:2px;
+}
+.ft-hero-body{}
+.ft-hero-title{
+  font-family:var(--fd);
+  font-size:22px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:var(--white);
+  letter-spacing:0.04em;
+  margin-bottom:6px;
+}
+.ft-hero-title span{color:var(--cyan)}
+.ft-hero-sub{
+  font-size:14px;
+  color:rgba(255,255,255,0.6);
+  line-height:1.6;
+}
+.ft-steps{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin:20px 0;
+}
+.ft-step{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  background:var(--white);
+  border:1px solid rgba(0,0,0,0.07);
+  border-radius:8px;
+  padding:18px 18px;
+}
+.ft-step-num{
+  width:28px;height:28px;
+  border-radius:50%;
+  background:var(--navy);
+  color:var(--cyan);
+  font-family:var(--fm);
+  font-size:11px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.ft-step-body{}
+.ft-step-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.ft-step-desc{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.55;
+}
+.ft-step-desc a{color:var(--navy-mid);text-decoration:none;font-weight:600}
+.ft-step-desc code{
+  font-family:var(--fm);
+  font-size:12px;
+  background:rgba(0,212,255,0.1);
+  color:var(--navy);
+  padding:1px 6px;
+  border-radius:3px;
+  border:1px solid rgba(0,212,255,0.2);
+}
+.ft-session-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:16px 0;
+}
+@media(max-width:540px){.ft-session-grid{grid-template-columns:1fr}}
+.ft-session-card{
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:7px;
+  padding:14px 14px;
+  background:var(--white);
+}
+.ft-session-phase{
+  font-family:var(--fm);
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:5px;
+}
+.ft-session-name{
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.3;
+}
+.ft-session-name.speed{color:#6366f1}
+.ft-session-name.accel{color:#a855f7}
+.ft-code-block{
+  background:var(--navy);
+  border:1px solid rgba(0,212,255,0.2);
+  border-radius:8px;
+  padding:20px 20px;
+  margin:16px 0;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.ft-code-label{
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.4);
+  margin-bottom:6px;
+}
+.ft-code-val{
+  font-family:var(--fm);
+  font-size:22px;
+  font-weight:700;
+  color:var(--cyan);
+  letter-spacing:0.1em;
+}
+.ft-code-note{
+  font-size:13px;
+  color:rgba(255,255,255,0.55);
+  line-height:1.5;
+  flex:1;
+  min-width:160px;
+}
 </style>
 </head>
 <body>
@@ -528,6 +672,7 @@ footer{
     <a href="#structure">Structure</a>
     <a href="#gym">Gym</a>
     <a href="#field">Field</a>
+    <a href="#frisbee-track">Frisbee Track</a>
     <a href="#recovery">Recovery</a>
     <a href="#injury">Injuries</a>
     <a href="#tournament">Tournaments</a>
@@ -766,7 +911,7 @@ footer{
   <div class="section-inner">
     <p class="section-eyebrow">Field conditioning</p>
     <h2 class="section-h">Speed &amp; acceleration sessions</h2>
-    <p class="section-body">Your two field conditioning sessions target different physical qualities and are sequenced deliberately. Both are delivered in Teambuildr as PDFs, these will move into the Frisbee Track app with embedded video as the program develops.</p>
+    <p class="section-body">Your two field conditioning sessions target different physical qualities and are sequenced deliberately. Select them directly in Frisbee Track to get the full session layout with drill demos embedded. The section below explains exactly how.</p>
 
     <div class="rule-list">
       <div class="rule-card">
@@ -782,6 +927,98 @@ footer{
     <div class="alert green" style="margin-top:20px">
       <div class="alert-icon">💡</div>
       <div class="alert-text">Some weeks you'll see suggestions to add speed efforts or high-speed running top-ups at team training. These are optional add-ons, Dylan will advise on these individually as the program progresses.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FRISBEE TRACK -->
+<section class="section alt" id="frisbee-track">
+  <div class="section-inner">
+    <p class="section-eyebrow">Frisbee Track</p>
+    <h2 class="section-h">Your field sessions<br>are in the app</h2>
+
+    <div class="ft-hero">
+      <div class="ft-hero-icon">📱</div>
+      <div class="ft-hero-body">
+        <div class="ft-hero-title"><span>Frisbee Track</span> is included with your program</div>
+        <div class="ft-hero-sub">All six field conditioning sessions from your program are built into the app. Select the session for the day and get the full drill layout, coaching notes, and embedded video demos on your phone at the field.</div>
+      </div>
+    </div>
+
+    <div class="ft-steps">
+      <div class="ft-step">
+        <div class="ft-step-num">1</div>
+        <div class="ft-step-body">
+          <div class="ft-step-title">Sign up at the Frisbee Track app</div>
+          <div class="ft-step-desc">Open <a href="https://dylanbennett900.github.io/disc-load" target="_blank">Frisbee Track</a> on your phone and create an account with your email. Takes about 30 seconds. Add it to your home screen for quick access at the field.</div>
+        </div>
+      </div>
+      <div class="ft-step">
+        <div class="ft-step-num">2</div>
+        <div class="ft-step-body">
+          <div class="ft-step-title">Enter your promo code to unlock</div>
+          <div class="ft-step-desc">Go to Settings inside the app and enter the code Dylan sent you. This unlocks your account. If you haven't received a code yet, contact Dylan directly.</div>
+        </div>
+      </div>
+      <div class="ft-step">
+        <div class="ft-step-num">3</div>
+        <div class="ft-step-body">
+          <div class="ft-step-title">Set up your profile</div>
+          <div class="ft-step-desc">Select your competition level (domestic or international) and enter your tournament date. Frisbee Track uses this to periodise your targets across the program.</div>
+        </div>
+      </div>
+      <div class="ft-step">
+        <div class="ft-step-num">4</div>
+        <div class="ft-step-body">
+          <div class="ft-step-title">Select your session for the day</div>
+          <div class="ft-step-desc">In the S&amp;C tab, open the DBSP Program section and tap the session matching your day. Speed or Acceleration, Phase 1 through 3. The full drill card opens with sets, reps, and video demos for every exercise.</div>
+        </div>
+      </div>
+      <div class="ft-step">
+        <div class="ft-step-num">5</div>
+        <div class="ft-step-body">
+          <div class="ft-step-title">Log it when you're done</div>
+          <div class="ft-step-desc">Tap Log This Session at the end and it auto-fills your training entry with the correct session data. This feeds your weekly load dashboard so Dylan can see how you're tracking against targets.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-eyebrow" style="margin-top:28px;margin-bottom:12px">Your six field sessions</p>
+    <div class="ft-session-grid">
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 1</div>
+        <div class="ft-session-name speed">Speed Day</div>
+      </div>
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 1</div>
+        <div class="ft-session-name accel">Acceleration Day</div>
+      </div>
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 2</div>
+        <div class="ft-session-name speed">Speed Day</div>
+      </div>
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 2</div>
+        <div class="ft-session-name accel">Acceleration Day</div>
+      </div>
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 3</div>
+        <div class="ft-session-name speed">Speed Day</div>
+      </div>
+      <div class="ft-session-card">
+        <div class="ft-session-phase">Phase 3</div>
+        <div class="ft-session-name accel">Acceleration Day</div>
+      </div>
+    </div>
+
+    <div class="alert green" style="margin-top:4px">
+      <div class="alert-icon">🎥</div>
+      <div class="alert-text"><strong>Drill demos are embedded in each session card.</strong> Tap any drill to open the video or diagram. Drills with a camera icon have a demo video. Drills with a diagram icon have an illustrated setup guide. A small number of demos are still being added and will be marked as coming soon.</div>
+    </div>
+
+    <div class="alert amber" style="margin-top:12px">
+      <div class="alert-icon">📊</div>
+      <div class="alert-text"><strong>Log every field session, not just the DBSP ones.</strong> If you do a team training session or a game, log that too. The weekly dashboard only reflects what you log, and that data is what Dylan uses to track your loading and make prescription decisions.</div>
     </div>
   </div>
 </section>
