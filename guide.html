@@ -54,40 +54,6 @@ body{font-family:var(--fb);color:var(--ink);background:var(--off-white);-webkit-
   );
 }
 
-/* Ticker bar — the signature element */
-.ticker-bar{
-  position:relative;
-  z-index:2;
-  background:rgba(0,212,255,0.12);
-  border-top:1px solid rgba(0,212,255,0.3);
-  border-bottom:1px solid rgba(0,212,255,0.15);
-  overflow:hidden;
-  padding:10px 0;
-}
-.ticker-track{
-  display:flex;
-  gap:0;
-  animation:ticker 22s linear infinite;
-  width:max-content;
-}
-@keyframes ticker{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
-}
-.ticker-item{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:0 32px;
-  white-space:nowrap;
-  font-family:var(--fm);
-  font-size:11px;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.7);
-}
-.ticker-item strong{color:var(--cyan);font-weight:500}
-.ticker-dot{width:4px;height:4px;border-radius:50%;background:rgba(0,212,255,0.4);flex-shrink:0}
 
 .hero-content{
   position:relative;
@@ -534,6 +500,8 @@ body{font-family:var(--fb);color:var(--ink);background:var(--off-white);-webkit-
   margin-top:6px;
 }
 .submit-btn:hover{background:var(--navy-deep)}
+.dm-btn{display:block;text-align:center;text-decoration:none;box-sizing:border-box}
+.dm-checklist{margin:4px 0 22px}
 .submit-btn:disabled{opacity:0.55;cursor:not-allowed}
 .form-note{
   font-size:11px;
@@ -545,7 +513,6 @@ body{font-family:var(--fb);color:var(--ink);background:var(--off-white);-webkit-
 .form-error{font-size:12px;color:#c0392b;margin-top:8px;display:none}
 
 /* Thank you */
-#apply-thankyou{display:none}
 .ty-icon{
   width:48px;height:48px;
   background:var(--navy);
@@ -698,7 +665,6 @@ footer{
   .process-steps::before{display:none}
 }
 @media(prefers-reduced-motion:reduce){
-  .ticker-track{animation:none}
   .avail-dot{animation:none}
   *{transition:none!important}
 }
@@ -710,22 +676,6 @@ footer{
 <section class="hero">
   <div class="hero-bg"></div>
 
-  <!-- Ticker — signature element: shows real credentials in a sports-data format -->
-  <div class="ticker-bar">
-    <div class="ticker-track">
-      <!-- duplicated for seamless loop -->
-      <div class="ticker-item"><strong>National S&amp;C Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
-      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player &amp; Coach</span></div>
-      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Head S&amp;C</span></div>
-      <div class="ticker-item"><strong>BSc Sport Science</strong><span class="ticker-dot"></span><span>7+ Years National Level</span></div>
-      <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
-      <div class="ticker-item"><strong>National S&amp;C &amp; Rehab Coach</strong><span class="ticker-dot"></span><span>Australian Sevens Rugby</span></div>
-      <div class="ticker-item"><strong>Australian Dingoes</strong><span class="ticker-dot"></span><span>Elite Player</span></div>
-      <div class="ticker-item"><strong>Sydney Sunder</strong><span class="ticker-dot"></span><span>Elite Player</span></div>
-      <div class="ticker-item"><strong>Masters of High Performance Sport</strong><span class="ticker-dot"></span><span>7+ Years National S&amp;C Coaching</span></div>
-      <div class="ticker-item"><strong>Rogue Ultimate</strong><span class="ticker-dot"></span><span>S&amp;C Coach</span></div>
-    </div>
-  </div>
 
   <div class="hero-content">
     <p class="hero-eyebrow">Individual Athlete Coaching · DBSP</p>
@@ -738,9 +688,43 @@ footer{
       One-on-one S&amp;C coaching from Dylan Bennett, National Strength &amp; Conditioning &amp; Rehabilitation Coach for the Australian Sevens Rugby program. Built for Ultimate Frisbee athletes serious about their physical preparation.
     </p>
     <div class="hero-ctas">
-      <a href="#apply" class="btn-primary">Apply to work with me</a>
+      <a href="#apply" class="btn-primary">Work with me</a>
       <a href="#guide" class="btn-ghost">Get the free guide first</a>
-      <a href="https://market.teambuildr.com/programs/dbsp/dbsp-ultimate-frisbee-speed-power/checkout" target="_blank" class="btn-ghost" style="border-color:rgba(0,212,255,0.4);color:var(--cyan)">Buy the program — $180/mo</a>
+    </div>
+  </div>
+</section>
+
+<!-- COACHING APPLY -->
+<section class="coaching-cta" id="apply">
+  <div class="coaching-inner">
+    <div>
+      <p class="cta-eyebrow">Limited spots · Sydney &amp; Remote</p>
+      <h2 class="cta-headline">Work with me<br>one-on-one</h2>
+      <ul class="includes-list">
+        <li>Custom training block built around your season &amp; goals</li>
+        <li>GPS-informed load management, the same methodology as national programs</li>
+        <li>Weekly check-ins and program adjustments based on real data</li>
+        <li>Gym and field sessions that actually complement each other</li>
+        <li>Delivered via Teambuildr. Clear, accessible, and trackable</li>
+      </ul>
+      <div class="cta-availability">
+        <span class="avail-dot"></span>
+        <span class="avail-text">Taking on athletes · limited spots available</span>
+      </div>
+    </div>
+
+    <!-- Enquiry: Instagram DM only -->
+    <div>
+      <div class="apply-card">
+        <p class="apply-card-title">Message me on Instagram</p>
+        <p class="apply-card-sub">All coaching enquiries go through my DMs. Send me a message with:</p>
+        <ul class="includes-list dm-checklist">
+          <li>Your playing level</li>
+          <li>What you're working towards</li>
+          <li>Any injuries or niggles</li>
+        </ul>
+        <a class="submit-btn dm-btn" href="https://ig.me/m/dbsportperformance" target="_blank" rel="noopener">Message @dbsportperformance</a>
+      </div>
     </div>
   </div>
 </section>
@@ -761,16 +745,16 @@ footer{
         <div class="stat-label">Years coaching at national &amp; international level</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">2</div>
-        <div class="stat-label">Australian Sevens programs</div>
+        <div class="stat-num">5</div>
+        <div class="stat-label">Years inside the Australian Sevens program</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">Elite Experience</div>
-        <div class="stat-label">Dingoes &amp; Sunder player, competing at the top level</div>
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Years playing frisbee at national &amp; international level</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num">GPS</div>
-        <div class="stat-label">Data-driven methodology, not guesswork</div>
+        <div class="stat-num">Evidence + Data</div>
+        <div class="stat-label">Masters of High Performance Sport, GPS-driven load monitoring</div>
       </div>
     </div>
   </div>
@@ -811,8 +795,8 @@ footer{
     <div class="process-steps">
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">01</div></div>
-        <p class="step-label">Apply</p>
-        <p class="step-sub">Short form. Tell me where you're at and what you're working towards</p>
+        <p class="step-label">Message me</p>
+        <p class="step-sub">DM me on Instagram. Tell me where you're at and what you're working towards</p>
       </div>
       <div class="process-step">
         <div class="step-dot"><div class="step-num" style="color:var(--cyan);font-size:10px;font-family:var(--fm)">02</div></div>
@@ -833,77 +817,6 @@ footer{
   </div>
 </section>
 
-<!-- COACHING APPLY -->
-<section class="coaching-cta" id="apply">
-  <div class="coaching-inner">
-    <div>
-      <p class="cta-eyebrow">Limited spots · Sydney &amp; Remote</p>
-      <h2 class="cta-headline">Work with me<br>one-on-one</h2>
-      <p class="cta-body">
-        I work with a small number of athletes at a time. That means your program gets genuine attention, not a template with your name on it.
-      </p>
-      <ul class="includes-list">
-        <li>Custom training block built around your season &amp; goals</li>
-        <li>GPS-informed load management, the same methodology as national programs</li>
-        <li>Weekly check-ins and program adjustments based on real data</li>
-        <li>Gym and field sessions that actually complement each other</li>
-        <li>Delivered via Teambuildr. Clear, accessible, and trackable</li>
-      </ul>
-      <div class="cta-availability">
-        <span class="avail-dot"></span>
-        <span class="avail-text">Taking applications · limited spots available</span>
-      </div>
-    </div>
-
-    <!-- Apply card / thank you -->
-    <div>
-      <div id="apply-form-state">
-        <div class="apply-card">
-          <p class="apply-card-title">Start your application</p>
-          <p class="apply-card-sub">Tell me a bit about where you're at. If it looks like a fit, I'll be in touch to arrange a call.</p>
-          <div class="field-group">
-            <label for="apply-name">Name</label>
-            <input type="text" id="apply-name" placeholder="Your full name" autocomplete="name">
-          </div>
-          <div class="field-group">
-            <label for="apply-email">Email</label>
-            <input type="email" id="apply-email" placeholder="you@email.com" autocomplete="email">
-          </div>
-          <div class="field-group">
-            <label for="apply-level">Playing level</label>
-            <select id="apply-level">
-              <option value="" disabled selected>Select your level</option>
-              <option>State / Club elite</option>
-              <option>National squad / representative</option>
-              <option>International</option>
-              <option>Competitive club</option>
-              <option>Other sport, looking to apply to frisbee</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label for="apply-goal">What are you working towards?</label>
-            <textarea id="apply-goal" rows="3" placeholder="e.g. returning from a hamstring injury, preparing for nationals, want to improve my speed..."></textarea>
-          </div>
-          <button class="submit-btn" id="apply-btn" onclick="handleApply()">Send my application</button>
-          <p class="form-note">I aim to reply within 2–3 days.</p>
-          <p class="form-error" id="apply-error"></p>
-        </div>
-      </div>
-
-      <div id="apply-thankyou">
-        <div class="apply-card">
-          <div class="ty-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 13l4 4L19 7"/>
-            </svg>
-          </div>
-          <p class="ty-title">Application received</p>
-          <p class="ty-msg">I'll review it and be in touch within a couple of days. In the meantime, the free guide below is worth a read.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- GUIDE (not ready fallback) -->
 <section class="not-ready" id="guide">
@@ -1024,53 +937,12 @@ footer{
   <nav class="footer-links">
     <a href="https://dbsportperformance.com">Website</a>
     <a href="https://instagram.com/dbsportperformance">Instagram</a>
-    <a href="https://dylanbennett900.github.io/disc-load">Frisbee Track</a>
     <a href="mailto:dbsportperformance@gmail.com">Contact</a>
   </nav>
 </footer>
 
 <script>
-const COACHING_ENDPOINT = "https://pfojdysbhnwxyjfgglls.supabase.co/functions/v1/coaching-enquiry";
 const GUIDE_ENDPOINT    = "https://pfojdysbhnwxyjfgglls.supabase.co/functions/v1/send-guide-email";
-
-async function handleApply() {
-  const name  = document.getElementById("apply-name").value.trim();
-  const email = document.getElementById("apply-email").value.trim();
-  const level = document.getElementById("apply-level").value;
-  const goal  = document.getElementById("apply-goal").value.trim();
-  const btn   = document.getElementById("apply-btn");
-  const errEl = document.getElementById("apply-error");
-
-  errEl.style.display = "none";
-
-  if (!name || !email || !email.includes("@") || !level || !goal) {
-    errEl.textContent = "Please fill in all fields.";
-    errEl.style.display = "block";
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "Sending…";
-
-  try {
-    const res = await fetch(COACHING_ENDPOINT, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ name, email, level, message: goal, source: "guide-page" })
-    });
-
-    if (!res.ok) throw new Error("Network error");
-
-    document.getElementById("apply-form-state").style.display = "none";
-    document.getElementById("apply-thankyou").style.display   = "block";
-
-  } catch(e) {
-    errEl.textContent = "Something went wrong. Email dbsportperformance@gmail.com directly.";
-    errEl.style.display = "block";
-    btn.disabled = false;
-    btn.textContent = "Send my application";
-  }
-}
 
 async function handleGuide() {
   const name  = document.getElementById("guide-name").value.trim();
@@ -1112,7 +984,6 @@ async function handleGuide() {
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   const id = document.activeElement?.id;
-  if (["apply-name","apply-email","apply-level"].includes(id)) handleApply();
   if (["guide-name","guide-email"].includes(id)) handleGuide();
 });
 </script>
